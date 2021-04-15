@@ -1,1 +1,7 @@
-# stackage-evolution
+# Evolution of a Haskell Repository and its Use of Monads: An Exploratory Study of Stackage
+
+Package repositories for a programming language are more com- mon every day. A repository can keep a register of the evolution of its packages. In the programming language Haskell with its defining characteristic that are monads, we can find the Stackage repository, which is a curated repository for stable Haskell packages in the Hackage respository. Despite the widespread use of Stackage in its industrial target, we are not aware of many empirical investiga- tions about how this repository has evolved, including the use of monads. This paper presents an empirical study that covers the evolution of fourteen Long-Term Support (LTS) snapshots (period 2014 - 2020) of available packages (12.46 giga bytes), including the use of monads from the mtl package, which provides the standard monad core (e.g., state, reader, continuations). To the best of our knowledge, this is the first large-scale analysis of the evolution of the Stackage repository with regards to monads and their usage as dependencies. Our results shows, for example, 15.2% of packages in Stackage (in)directly depend on packages outside of this repository or the mtl package is sixth package more used in Stackage. Previous and other results may evidence how developers use Haskell and give guidelines to Stackage maintainers.
+
+## Data
+
+This exploratory study is developed by Felipe Ruiz and Nicolas Sepulveda, under the supervision of [Paul Leger](http://pleger.cl) and [Ismael Figueroa](https://ifigueroap.github.io/) at [Pragmatics Lab](http://pragmaticslab.com)
