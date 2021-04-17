@@ -135,8 +135,12 @@ def get_count_updated_packages_by_lts(df_list, df):
                 count_updated_packages_by_lts[lts] += 1
 
     for idx, lts in enumerate(count_updated_packages_by_lts):
-        count_updated_packages_by_lts[lts] = count_updated_packages_by_lts[lts]*100 / len(df_list[idx])
+        if idx == 0:
+            count_updated_packages_by_lts[lts] = 0
+        else:
+            count_updated_packages_by_lts[lts] = count_updated_packages_by_lts[lts] * 100 / len(df_list[idx - 1])
     
+    del count_updated_packages_by_lts['0-7']
     return count_updated_packages_by_lts
 
 
@@ -185,3 +189,80 @@ def get_removed_packages_mtl_by_lts(continuity_df):
                 if((row[j] == 1 or row[j] == 0) and row[j-1] == 2):
                     count[j] += 1
     return count
+
+mtl_modules = [
+    "Control.Monad.Cont", 
+    "Control.Monad.Cont.Class", 
+    "Control.Monad.Error",
+    "Control.Monad.Error.Class",
+    "Control.Monad.Except",
+    "Control.Monad.Identity", 
+    "Control.Monad.List", 
+    "Control.Monad.RWS", 
+    "Control.Monad.RWS.Class", 
+    "Control.Monad.RWS.Lazy", 
+    "Control.Monad.RWS.Strict", 
+    "Control.Monad.Reader", 
+    "Control.Monad.Reader.Class",
+    "Control.Monad.State",
+    "Control.Monad.State.Class",
+    "Control.Monad.State.Lazy", 
+    "Control.Monad.State.Strict", 
+    "Control.Monad.Trans", 
+    "Control.Monad.Writer", 
+    "Control.Monad.Writer.Class", 
+    "Control.Monad.Writer.Lazy", 
+    "Control.Monad.Writer.Strict"
+]
+
+mtl_monads = ['Continuation', 'Error', 'Except', 'Identity', 'List', 'RWS', 'Reader', 'State', 'Trans', 'Writer']
+
+def usage_combination_to_string(usage_vector):
+    letters = ('C', 'E', 'I', 'L', 'R', 'S', 'T', 'W', 'X', 'Z')    
+    combination = "".join(list(map(lambda x: x[1] if x[0] == 1 else "", zip(usage_vector, letters))))
+    if combination == "":
+        combination = "None"
+    return combination
+
+def compute_monad_usage_by_df(df):
+    mtl_cont = mtl_modules[0:2]
+    mtl_error = mtl_modules[2:4]
+    mtl_except = mtl_modules[4:5]
+    mtl_identity= mtl_modules[5:6]
+    mtl_list = mtl_modules[6:7]
+    mtl_rws = mtl_modules[7:11]
+    mtl_reader = mtl_modules[11:13]
+    mtl_state = mtl_modules[13:17]
+    mtl_trans = mtl_modules[17:18]
+    mtl_writer = mtl_modules[18:]    
+    
+    df.loc[df.index, 'Continuation'] = df[mtl_cont].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Error'] = df[mtl_error].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Except'] = df[mtl_except].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Identity'] = df[mtl_identity].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'List'] = df[mtl_list].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'RWS'] = df[mtl_rws].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Reader'] = df[mtl_reader].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'State'] = df[mtl_state].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Trans'] = df[mtl_trans].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Writer'] = df[mtl_writer].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'MonadsUsed'] = df[mtl_monads].sum(axis=1)
+    
+    df.loc[df.index, 'MonadsUsedVector'] = df.apply(
+        lambda row: (
+            row["Continuation"],
+            row["Error"],
+            row["Identity"],
+            row["List"],
+            row["Reader"],
+            row["State"],
+            row["Trans"],
+            row["Writer"],
+            row["Except"],
+            row["RWS"]
+        ), 
+        axis = 1
+    )
+    
+    df.loc[df.index, 'MonadsUsedCode'] = df.apply(lambda row: usage_combination_to_string(row['MonadsUsedVector']), axis = 1)
+    return df
