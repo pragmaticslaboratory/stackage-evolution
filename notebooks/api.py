@@ -174,7 +174,7 @@ def get_added_packages_mtl_by_lts(continuity_df):
             if(row[lts] == 2):
                 if(j == 0):
                     count[j] += 1
-                elif(row[j-1] < 2):
+                elif(row[j-1] == 0):
                     count[j] += 1
     
     return count
@@ -186,8 +186,36 @@ def get_removed_packages_mtl_by_lts(continuity_df):
     for i, row in continuity_df.iterrows():
         for j, lts in enumerate(lts_list):
             if(j > 0):
-                if((row[j] == 1 or row[j] == 0) and row[j-1] == 2):
+                if(row[j] == 0 and row[j-1] == 2):
                     count[j] += 1
+
+    return count
+
+
+def get_packages_started_use_mtl(continuity_df):
+    count = list(np.zeros(len(lts_list)))
+    
+    for i, row in continuity_df.iterrows():
+        for j, lts in enumerate(lts_list):
+            if(j == 0 and row[j] == 2):
+                count[j] += 1
+
+            if(j > 0):
+                if(row[j] == 2 and row[j-1] == 1):
+                    count[j] += 1
+
+    return count
+
+
+def get_packages_stopped_use_mtl(continuity_df):
+    count = list(np.zeros(len(lts_list)))
+    
+    for i, row in continuity_df.iterrows():
+        for j, lts in enumerate(lts_list):
+            if(j > 0):
+                if(row[j] == 1 and row[j-1] == 2):
+                    count[j] += 1
+                    
     return count
 
 mtl_modules = [
