@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11', '16-22']
+lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11']
 
 # returns a list with all the existing packages in some version of LTS
 def get_all_time_packages(df_list):
