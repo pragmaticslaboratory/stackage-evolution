@@ -36,10 +36,10 @@ main = do
   let all_lines = lines pkgConf
   let cabalFile = head all_lines
   let pkgFiles = tail all_lines
-  putStrLn (show "cabal file: " ++ show cabalFile)
-  putStrLn (show "pkg files: " ++ show pkgFiles)
-  putStrLn (show "cabalFile: " ++ cabalFile)
-  mapM (putStrLn . show) pkgFiles
+  -- putStrLn (show "cabal file: " ++ show cabalFile)
+  -- putStrLn (show "pkg files: " ++ show pkgFiles)
+  -- putStrLn (show "cabalFile: " ++ cabalFile)
+  -- mapM (putStrLn . show) pkgFiles
 
   resultsCalledFunctions <-
     concatMapM
@@ -62,7 +62,7 @@ main = do
   -- Obtain function declarations, processing per Module
   -- resultsDeclaredFunctions <- mapM (\uri -> getDeclaredFunctionsForURI cabalFile uri) pkgFiles
   -- mapM (putStrLn . show) $ (map prettyPrint (nub (concat resultsDeclaredFunctions)))
-  putStrLn "###################"
+  -- putStrLn "###################"
 
   -- Obtain called functions, processing per Module
   -- resultsCalledFunctions <- mapM (\uri -> getCalledFunctionsForURI cabalFile uri) pkgFiles
