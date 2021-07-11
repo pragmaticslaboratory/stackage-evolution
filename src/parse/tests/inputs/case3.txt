@@ -1,0 +1,8 @@
+liftEC :: (Default l1) => EC l1 a -> EC l2 l1
+liftEC ec = do
+  cs <- lift get
+  let (l,cs') = runState (execStateT ec def) cs
+  lift (put cs')
+  return l
+
+  

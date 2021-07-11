@@ -1,0 +1,4 @@
+-- modify https://hackage.haskell.org/package/mtl-2.2.2/docs/src/Control.Monad.State.Class.html#modify
+
+appendToPath :: [String] -> Path
+appendToPath  = modify . flip mappend . toValue . join

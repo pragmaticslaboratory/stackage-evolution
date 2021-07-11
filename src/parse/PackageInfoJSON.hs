@@ -36,10 +36,10 @@ main = do
   let all_lines = lines pkgConf
   let cabalFile = head all_lines
   let pkgFiles = tail all_lines
-  -- putStrLn (show "cabal file: " ++ show cabalFile)
-  -- putStrLn (show "pkg files: " ++ show pkgFiles)
-  -- putStrLn (show "cabalFile: " ++ cabalFile)
-  -- mapM (putStrLn . show) pkgFiles
+  putStrLn (show "cabal file: " ++ show cabalFile)
+  putStrLn (show "pkg files: " ++ show pkgFiles)
+  putStrLn (show "cabalFile: " ++ cabalFile)
+  mapM (putStrLn . show) pkgFiles
 
   resultsCalledFunctions <-
     concatMapM
@@ -62,7 +62,7 @@ main = do
   -- Obtain function declarations, processing per Module
   -- resultsDeclaredFunctions <- mapM (\uri -> getDeclaredFunctionsForURI cabalFile uri) pkgFiles
   -- mapM (putStrLn . show) $ (map prettyPrint (nub (concat resultsDeclaredFunctions)))
-  -- putStrLn "###################"
+  putStrLn "###################"
 
   -- Obtain called functions, processing per Module
   -- resultsCalledFunctions <- mapM (\uri -> getCalledFunctionsForURI cabalFile uri) pkgFiles
@@ -185,14 +185,25 @@ getIPBindsApplications :: IPBind l -> [QName l]
 getIPBindsApplications (IPBind _ name exp) = getExpApplications exp
 
 getExpApplications :: Exp l -> [QName l]
-getExpApplications (App _ exp1 exp2) =
+getExpApplications (App _ exp1 exp2) = -- getExpApplications exp1 ++ getExpApplications exp2
   case exp1 of
     (STX.Var _ qname) -> [qname] ++ getExpApplications exp2
+    (App _ _ _) -> getExpApplications exp1 ++ getExpApplications exp2
+    (InfixApp _ _ _ _) -> getExpApplications exp1 ++ getExpApplications exp2
     _ -> getExpApplications exp2
 getExpApplications (InfixApp _ exp1 qop exp2) =
   case qop of
-    (QVarOp _ qname) -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
-    (QConOp _ qname) -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
+    (QVarOp _ qname) -> case exp1 of
+      (STX.Var _ qnameExp1) -> [qname] ++ [qnameExp1] ++ getExpApplications exp2
+      (App _ _ _) -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
+      (InfixApp _ _ _ _) -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
+      _ -> [qname] ++ getExpApplications exp2
+    (QConOp _ qname) -> case exp1 of
+      (STX.Var _ qnameExp1) -> [qname] ++ [qnameExp1] ++ getExpApplications exp2
+      (App _ _ _) -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
+      (InfixApp _ _ _ _) -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
+      _ -> [qname] ++ getExpApplications exp1 ++ getExpApplications exp2
+
 getExpApplications (NegApp _ exp) = getExpApplications exp
 getExpApplications (Lambda _ patlist exp) = concatMap getPatApplications patlist ++ getExpApplications exp
 getExpApplications (Let _ binds exp) = getBindsApplications binds ++ getExpApplications exp
