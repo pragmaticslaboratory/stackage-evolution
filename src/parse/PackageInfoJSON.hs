@@ -28,6 +28,8 @@ import System.Environment
 import System.IO
 import Text.PrettyPrint
 
+import Debug.Trace
+
 -- TODO handle I/O exceptions using handle, catch, or other
 -- https://stackoverflow.com/questions/6009384/exception-handling-in-haskell
 main :: IO ()
@@ -79,7 +81,7 @@ data ModuleResultData = ModuleResultData
   }
   deriving (Show, Generic, ToJSON)
 
-moduleInfoToJSON :: String -> STX.Module l -> ModuleResultData
+moduleInfoToJSON :: (Show l) => String -> STX.Module l -> ModuleResultData
 moduleInfoToJSON uri mod =
   ModuleResultData
     { file = uri,
@@ -105,47 +107,77 @@ lrtrim = \xs -> rtrim $ ltrim xs
 isSpace' :: Char -> Bool
 isSpace' = \c -> (c == ' ')
 
-getModuleCalledFunctions :: STX.Module l -> [[QName l]]
+getModuleCalledFunctions :: (Show l) => STX.Module l -> [[QName l]]
 getModuleCalledFunctions (STX.Module _ _ _ _ declarations) =
-  map getBindCalledFunctions $
+  -- trace (show declarations) $
+  (map getBindCalledFunctions $
     filter
       ( \decl -> case decl of
-          (PatBind _ _ _ _) -> True
+          (PatBind _ _ _ _) -> True          
+          (FunBind _ _) -> True
+          (InstDecl _ _ _ _) -> True
+          (TypeSig _ _ _) -> False -- Check later... or never :)
           _ -> False
       )
-      declarations
-getModuleCalledFunctions _ = []
+      declarations)
+getModuleCalledFunctions _ = error "Unsupported module in getModuleCalledFunctions"
 
-getBindCalledFunctions :: Decl l -> [QName l]
-getBindCalledFunctions (PatBind _ pat rhs _) = getPatApplications pat ++ getRhsApplications rhs
+getMaybeBindsApplications (Just binds) = getBindsApplications binds
+getMaybeBindsApplications Nothing = []
 
-getPatApplications :: Pat l -> [QName l]
+getBindCalledFunctions :: Show l => Decl l -> [QName l]
+getBindCalledFunctions (PatBind _ pat rhs maybeBinds) = getPatApplications pat ++ getRhsApplications rhs ++ getMaybeBindsApplications maybeBinds  
+getBindCalledFunctions (FunBind _ matches) = concatMap getMatchApplications matches
+
+getBindCalledFunctions (InstDecl  _ _ instRule Nothing) = []
+getBindCalledFunctions (InstDecl  _ _ instRule (Just instDecls))= concatMap getInstDeclApplications instDecls
+
+-- Declarations that must be explicitly ignored
+getBindCalledFunctions (TypeSig _ _ _) = []
+getBindCalledFunctions decl = error $ "Unsupported declaration in getBindCalledFunctions: " ++ (show decl)
+
+getMatchApplications :: Show l => Match l -> [QName l]
+getMatchApplications (Match _ name pats rhs maybeBind) = (concatMap getPatApplications pats) ++ (getRhsApplications rhs) ++ (getMaybeBindsApplications maybeBind)
+getMatchApplications (InfixMatch _ pat name pats rhs maybeBind) = []
+
+getPatApplications :: Show l => Pat l -> [QName l]
 getPatApplications (PInfixApp _ _ qname _) = [qname]
 getPatApplications (PApp _ qname patlist) = [qname] ++ (concatMap getPatApplications patlist)
 getPatApplications (PTuple _ _ patlist) = concatMap getPatApplications patlist
 getPatApplications (PUnboxedSum _ _ _ pat) = getPatApplications pat
 getPatApplications (PList _ patlist) = concatMap getPatApplications patlist
 getPatApplications (PParen _ pat) = getPatApplications pat
+
 getPatApplications (PRec _ _ patfields) = concatMap getPatFieldApplications patfields
   where
     getPatFieldApplications (PFieldPat _ _ pat) = getPatApplications pat
     getPatFieldApplications _ = []
+
 getPatApplications (PAsPat _ _ pat) = getPatApplications pat
 getPatApplications (PIrrPat _ pat) = getPatApplications pat
 getPatApplications (PatTypeSig _ pat _) = getPatApplications pat
 getPatApplications (PViewPat _ exp pat) = getExpApplications exp ++ getPatApplications pat
+
 getPatApplications (PRPat _ rpats) = concatMap getRPPatApplications rpats
   where
     getRPPatApplications (RPPat _ pat) = getPatApplications pat
     getRPPatApplications _ = []
+
 getPatApplications (PXTag _ _ _ maybepat patlist) = concatMap getPatApplications (maybeToList maybepat) ++ concatMap getPatApplications patlist
 getPatApplications (PXETag _ _ _ maybepat) = concatMap getPatApplications (maybeToList maybepat)
 getPatApplications (PXPatTag _ pat) = getPatApplications pat
 getPatApplications (PSplice _ splice) = getSpliceApplications splice
 getPatApplications (PBangPat _ pat) = getPatApplications pat
+getPatApplications (PVar _ name) = []
 getPatApplications _ = []
 
-getSpliceApplications :: Splice l -> [QName l]
+getInstDeclApplications :: Show l => InstDecl l -> [QName l]
+getInstDeclApplications (InsDecl _ dec) = getBindCalledFunctions dec
+getInstDeclApplications (InsType _ _ _) = []
+getInstDeclApplications (InsData _ _ _ _ _) = []
+getInstDeclApplications (InsGData _ _ _ _ _ _) = []
+
+getSpliceApplications :: Show l => Splice l -> [QName l]
 getSpliceApplications (ParenSplice _ exp) = getExpApplications exp
 getSpliceApplications (TParenSplice _ exp) = getExpApplications exp
 getSpliceApplications _ = []
@@ -160,37 +192,39 @@ getDeclaredFunctionsForURI cabalFile uri = do
     case parsedFileResult of
       ParseFailed srcLoc err ->
         -- undefined is being called!! fix
-        return $ [] --Decl noSrcSpan ("IsmaParseError[" ++ uri ++ "][" ++ err ++ "][" ++ show srcLoc ++ "]")]
+        -- return $ [(AnnPragma noSrcSpan)]
+        error err
       ParseOk mod ->
         return (getModuleDeclaredFunctions mod)
 
-getRhsApplications :: Rhs l -> [QName l]
+getRhsApplications :: Show l => Rhs l -> [QName l]
 getRhsApplications (UnGuardedRhs _ exp) = getExpApplications exp
 getRhsApplications (GuardedRhss _ grhss) = concatMap getGuardedRhsApplications grhss
 
-getGuardedRhsApplications :: GuardedRhs l -> [QName l]
+getGuardedRhsApplications :: Show l => GuardedRhs l -> [QName l]
 getGuardedRhsApplications (GuardedRhs _ stmts exp) = concatMap getStmtApplications stmts ++ getExpApplications exp
 
-getStmtApplications :: Stmt l -> [QName l]
+getStmtApplications :: Show l => Stmt l -> [QName l]
 getStmtApplications (Generator _ pat exp) = getPatApplications pat ++ getExpApplications exp
 getStmtApplications (Qualifier _ exp) = getExpApplications exp
 getStmtApplications (LetStmt _ bindings) = getBindsApplications bindings
 getStmtApplications (RecStmt _ stmts) = concatMap getStmtApplications stmts
 
-getBindsApplications :: Binds l -> [QName l]
-getBindsApplications (BDecls _ declarations) = [] -- TO DO: IS THIS NECESSARY?? to inspect yet again all Decls?
+getBindsApplications :: Show l => Binds l -> [QName l]
+getBindsApplications (BDecls _ declarations) = concatMap getBindCalledFunctions declarations
 getBindsApplications (IPBinds _ ipbinds) = concatMap getIPBindsApplications ipbinds
 
-getIPBindsApplications :: IPBind l -> [QName l]
+getIPBindsApplications :: Show l => IPBind l -> [QName l]
 getIPBindsApplications (IPBind _ name exp) = getExpApplications exp
 
-getExpApplications :: Exp l -> [QName l]
-getExpApplications (App _ exp1 exp2) = -- getExpApplications exp1 ++ getExpApplications exp2
+getExpApplications :: Show l => Exp l -> [QName l]
+getExpApplications (App _ exp1 exp2) =
   case exp1 of
     (STX.Var _ qname) -> [qname] ++ getExpApplications exp2
     (App _ _ _) -> getExpApplications exp1 ++ getExpApplications exp2
     (InfixApp _ _ _ _) -> getExpApplications exp1 ++ getExpApplications exp2
     _ -> getExpApplications exp2
+  
 getExpApplications (InfixApp _ exp1 qop exp2) =
   case qop of
     (QVarOp _ qname) -> case exp1 of
@@ -247,15 +281,20 @@ getExpApplications (LeftArrHighApp _ exp1 exp2) = getExpApplications exp1 ++ get
 getExpApplications (RightArrHighApp _ exp1 exp2) = getExpApplications exp1 ++ getExpApplications exp2
 getExpApplications (ArrOp _ exp) = getExpApplications exp
 getExpApplications (LCase _ alts) = concatMap getAltApplications alts
-getExpApplications _ = []
+getExpApplications (Con _ qname) = [qname]
 
-getBracketApplications :: Bracket l -> [QName l]
+-- Expressions that should return empty lists of calls
+getExpApplications (STX.Var _ _) = []
+
+getExpApplications unmatchedExp = trace ("Unmatched exp: " ++ show [unmatchedExp]) $ []
+
+getBracketApplications :: Show l => Bracket l -> [QName l]
 getBracketApplications (ExpBracket _ exp) = getExpApplications exp
 getBracketApplications (TExpBracket _ exp) = getExpApplications exp
 getBracketApplications (PatBracket _ pat) = getPatApplications pat
 getBracketApplications _ = [] -- TO DO: should I go into Decls? and Types?
 
-getQualStmtApplications :: QualStmt l -> [QName l]
+getQualStmtApplications :: Show l => QualStmt l -> [QName l]
 getQualStmtApplications (QualStmt _ stmt) = getStmtApplications stmt
 getQualStmtApplications (ThenTrans _ exp) = getExpApplications exp
 getQualStmtApplications (ThenBy _ exp1 exp2) = getExpApplications exp1 ++ getExpApplications exp2
@@ -266,7 +305,7 @@ getQualStmtApplications (GroupByUsing _ exp1 exp2) = getExpApplications exp1 ++ 
 getFieldUpdateApplications (FieldUpdate _ _ exp) = getExpApplications exp
 getFieldUpdateApplications _ = []
 
-getAltApplications :: Alt l -> [QName l]
+getAltApplications :: Show l => Alt l -> [QName l]
 getAltApplications (Alt _ pat rhs maybebinds) = getPatApplications pat ++ getRhsApplications rhs ++ maybeBindApplications
   where
     maybeBindApplications = case maybebinds of
