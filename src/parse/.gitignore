@@ -1,0 +1,6 @@
+*.hi
+*.o
+PackageImports
+PackageInfoJSON
+ParseCabal
+
