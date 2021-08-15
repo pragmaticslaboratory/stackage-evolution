@@ -61,3 +61,24 @@ def test_case5():
     calls = run_parser(filename)    
 
     assert "runListT" in calls
+
+
+def test_case6():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case6.txt")
+    calls = run_parser(filename)    
+
+    assert "evalStateT" in calls
+
+
+def test_case7():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case7.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+
+def test_case8():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case8.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls

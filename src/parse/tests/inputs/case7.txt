@@ -1,0 +1,5 @@
+parseTextLines :: [T.Text] -> ParsingState
+parseTextLines lst = flip execState emptyParsingState $ do
+  let initialLine = replicate (maximumLineLength lst) Nothing
+  lastVerticalLine <- foldM parseLine initialLine $ zip [0 ..] lst
+  mapM_ stopVerticalSegment lastVerticalLine 

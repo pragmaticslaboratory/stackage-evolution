@@ -1,10 +1,9 @@
 import argparse
 from subprocess import PIPE
-import re
 import subprocess
-import json
 import pandas as pd
 import numpy as np
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("df", help="Dataframe file with package imports")
@@ -36,7 +35,7 @@ for index, pkg in df.iterrows():
     paths_for_input = "\n".join(path_list)
 
     complated_process = subprocess.run(
-        "/Users/feliperuiz/Desktop/github/tesis/stackage-evolution/src/parse/PackageInfoJSON",
+        os.path.join(os.path.dirname(__file__), '../parse/PackageInfoJSON'),
         stdout=PIPE,
         input=paths_for_input,
         text=True
