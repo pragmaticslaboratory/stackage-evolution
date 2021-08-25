@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-
+import math
+import operator
 lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11']
 
 # returns a list with all the existing packages in some version of LTS
@@ -83,6 +84,48 @@ def get_pkgs_out_transitively(df_list):
         out_transitive_pkgs[lts_list[i]] = len(set(aux_out_transitive_pkgs))
     
     return out_transitive_pkgs
+
+def get_pkgs_direct_dependency(df_list):  
+    direct_dependency_pkgs = create_lts_obj()
+    for i, df in enumerate(df_list):
+        aux_direct_dependency_pkgs = []        
+        count = 0
+        for idx, row in df.iterrows():
+            for dependency in (list(set(row['deps']))):
+                count+=1
+                aux_direct_dependency_pkgs.append(count)
+
+        print(f"{lts_list[i]} processed")
+        direct_dependency_pkgs[lts_list[i]] = len(set(aux_direct_dependency_pkgs))
+        
+    return direct_dependency_pkgs
+
+def get_pkgs_indirect_dependency(df1):
+    visited = {}
+    def dfs(df1, pkg):
+        visited[pkg] = True
+        deps = df1[df1['package'] == pkg]['deps']
+        if len(deps) > 0:
+            for dependency in deps[0]: 
+                if not dependency in visited:
+                    dfs(df1, dependency)
+
+        return 1
+    for i, df in enumerate(df1):
+        len_ind_deps = []
+        for idx, row in df.iterrows():    
+            total = 0
+            for dependency in list(row['deps']):         
+                dfs(df, dependency)
+            for dependency in list(row['deps']):     
+                if dependency in visited:
+                    del visited[dependency]
+            total = len(visited)
+            visited = {}
+            len_ind_deps.append(total)
+        print(f"{lts_list[i]} processed")
+        df['len_ind_deps'] = len_ind_deps
+    return 1
 
 def get_update_count_df(df_list, versions_df):
     def last_update(row):
@@ -294,3 +337,76 @@ def compute_monad_usage_by_df(df):
     
     df.loc[df.index, 'MonadsUsedCode'] = df.apply(lambda row: usage_combination_to_string(row['MonadsUsedVector']), axis = 1)
     return df
+
+def diagram_box(list_deps):
+    outlier_list = [[],[],[],[],[]]
+    for idx, x in enumerate (list_deps):
+        Q1 = 0
+        Q2 = 0
+        Q3 = 0
+        LS = 0
+        LI = 0
+        IQR = 0
+        outlier = 0
+        LS_LIvalue = 0
+        Q1value = 0
+        Q2value = 0
+        Q3value = 0
+        N = len(x)
+        if (math.trunc((N+1)/4)-((N+1)/4)) == 0:
+            Q1 = x[int(((N+1)/4)-1)]
+        else:
+            i = math.trunc((N+1)/4)
+            d = math.trunc((N+1)/4) - ((N+1)/4)
+            Q1 = x[i-1] + (d *(x[i]-x[i-1]))
+
+        if (math.trunc(3*(N+1)/4)-(3*(N+1)/4)) == 0:
+            Q3 = x[int((3*(N+1)/4)-1)]
+        else:
+            i = math.trunc(3*(N+1)/4)
+            d = math.trunc(3*(N+1)/4) - (3*(N+1)/4)
+            Q3 = x[i-1] + d *(x[i]-x[i-1])
+
+        if len(x)%2:            
+            Q2 = x[round(N/2)-1]
+        else:
+            Q2 = (x[round(N/2)-1]+x[round(N/2)])/2
+        IQR = Q3-Q1
+        LI = Q1 - (1.5*IQR)
+        LS = Q3 + (1.5*IQR)
+        for j in range(len(x)):
+            if LS <= x[j] or LI >= x[j]:
+                outlier+=1
+            if (LS > x[j] and Q3 < x[j]) or (LI < x[j] and Q1 > x[j]):
+                LS_LIvalue+=1
+            if Q3 >= x[j] and Q2 < x[j]:
+                Q3value+=1
+            if Q2 == x[j]:
+                Q2value+=1
+            if Q1 <= x[j] and Q2 > x[j]:
+                Q1value+=1
+        outlier_list[0].append(outlier*100/N)
+        outlier_list[1].append(LS_LIvalue*100/N)
+        outlier_list[2].append(Q3value*100/N)
+        outlier_list[3].append(Q2value*100/N)
+        outlier_list[4].append(Q1value*100/N)
+    
+    return outlier_list
+
+def calculate_bottom(data, bar_idx):
+    if bar_idx == 0:
+        return 0
+    
+    cumsum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    for idx in range(0, bar_idx):
+        cumsum = list(map(operator.add, cumsum, data[idx]))
+    return cumsum
+
+def calculate_bottom_dict(data, keylist, bar_idx):
+    if bar_idx == 0:
+        return 0
+    
+    cumsum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    for idx in range(0, bar_idx):
+        cumsum = list(map(operator.add, cumsum, data[keylist[idx]]))
+    return cumsum
