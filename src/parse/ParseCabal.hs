@@ -69,9 +69,9 @@ showPackageHeader :: String -> GenericPackageDescription -> [String]
 showPackageHeader cabalFile d = let desc = packageDescription d
                       in [showPkgName desc
                          , showPkgVer desc
-                         , stability desc
+                         , showPkgSta desc
                          , cabalFile]
-                         ++ [intercalate "," (sort (splitOn "," (filterLn (category desc))))]
+                         ++ [intercalate "," (sort (splitOn "," (filterLn (showPkgCat desc))))]
 
 
 showModuleName :: ModuleName -> String
@@ -83,6 +83,12 @@ showPkgName desc = unPackageName (pkgName (package desc))
 
 showPkgVer :: PackageDescription -> String
 showPkgVer desc = display (pkgVersion (package desc))
+
+showPkgSta :: PackageDescription -> String
+showPkgSta desc = show (stability desc)
+
+showPkgCat :: PackageDescription -> String
+showPkgCat desc = show (category desc)
 
 showVersionInterval :: [VersionInterval] -> String
 showVersionInterval [] = ""
