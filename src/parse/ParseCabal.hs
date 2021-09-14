@@ -21,6 +21,7 @@ import Control.Monad
 
 
 import Text.PrettyPrint
+import GHC.Show (Show(showsPrec))
 
 main :: IO ()
 main = do files <- getContents
@@ -36,11 +37,11 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
             Left (_, errors) -> error $ "Parse Error for cabal file: " ++ cabalFile
             Right d          -> return $
                                intercalate ";" $ 
-                               -- showPackageHeader cabalFile d ++
-                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> (showDepsName x) ++ "," ++ (showVersionRange y)) $ nub $ extractDeps d)] -- ++
-                               --[intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
-                               --[intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
-                               --[intercalate "," (mainModules d)]                               
+                               showPackageHeader cabalFile d ++
+                               [intercalate "," $ sort $ (mapOrEmpty (\dependency -> prettyShow (simplifyDependency dependency)) $ nub $ extractDeps d)] ++
+                               [intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
+                               [intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
+                               [intercalate "," (mainModules d)]                               
           where exposedModules d = let (x, _) = exposedAndOtherModules d in x
                 mainModules d = let (_, y) = exposedAndOtherModules d in y
                 
@@ -92,10 +93,10 @@ showPkgCat :: PackageDescription -> String
 showPkgCat desc = show (category desc)
 
 showDepsName :: PackageName -> String
-showDepsName depsName= unPackageName depsName
+showDepsName depsName = unPackageName depsName
 
-showVersionRange :: VersionRange -> Doc
-showVersionRange pkg_ver = fmap pretty (simpleParse (show pkg_ver) :: Maybe VersionRange)
+-- showVersionRange :: VersionRange -> String
+-- showVersionRange versionRange = fmap pretty (simpleParse CabalSpecV1_2 versionRange :: Maybe VersionRange)
 
 showVersionInterval :: [VersionInterval] -> String
 showVersionInterval [] = ""
