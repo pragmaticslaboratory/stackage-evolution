@@ -8,6 +8,8 @@ import Distribution.PackageDescription
 import Distribution.PackageDescription.Parsec
 import Distribution.Version
 import Distribution.Text
+import Distribution.Pretty
+import Distribution.CabalSpecVersion
 import Distribution.ModuleName hiding(main)
 
 import Data.List
@@ -35,7 +37,7 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
             Right d          -> return $
                                intercalate ";" $ 
                                -- showPackageHeader cabalFile d ++
-                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> (showDepsName x) ++ (showVersionRange y)) $ nub $ extractDeps d)] -- ++
+                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> (showDepsName x) ++ "," ++ (showVersionRange y)) $ nub $ extractDeps d)] -- ++
                                --[intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
                                --[intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
                                --[intercalate "," (mainModules d)]                               
@@ -90,10 +92,10 @@ showPkgCat :: PackageDescription -> String
 showPkgCat desc = show (category desc)
 
 showDepsName :: PackageName -> String
-showDepsName = show
+showDepsName depsName= unPackageName depsName
 
-showVersionRange :: VersionRange -> String
-showVersionRange = show
+showVersionRange :: VersionRange -> Doc
+showVersionRange pkg_ver = fmap pretty (simpleParse (show pkg_ver) :: Maybe VersionRange)
 
 showVersionInterval :: [VersionInterval] -> String
 showVersionInterval [] = ""
