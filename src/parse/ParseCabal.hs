@@ -33,18 +33,18 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
           case result of
             Left (_, errors) -> error $ "Parse Error for cabal file: " ++ cabalFile
             Right d          -> return $
-                               intercalate ";" $
-                               showPackageHeader cabalFile d ++
-                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> unPackageName x) $ nub $ extractDeps d)] ++
-                               [intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
-                               [intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
-                               [intercalate "," (mainModules d)]                               
+                               intercalate ";" $ 
+                               -- showPackageHeader cabalFile d ++
+                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> unPackageName x) $ nub $ extractDeps d)] -- ++
+                               --[intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
+                               --[intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
+                               --[intercalate "," (mainModules d)]                               
           where exposedModules d = let (x, _) = exposedAndOtherModules d in x
                 mainModules d = let (_, y) = exposedAndOtherModules d in y
                 
 
 extractDeps :: GenericPackageDescription -> [Dependency]
-extractDeps d = ldeps ++ edeps
+extractDeps d = ldeps ++ edeps -- library deps (?) - external deps (?)
   where ldeps = case (condLibrary d) of
                 Nothing -> []
                 Just c -> condTreeConstraints c
@@ -69,20 +69,25 @@ showPackageHeader :: String -> GenericPackageDescription -> [String]
 showPackageHeader cabalFile d = let desc = packageDescription d
                       in [showPkgName desc
                          , showPkgVer desc
-                         , stability desc
+                         , showPkgSta desc
+                         , showPkgCat desc
                          , cabalFile]
-                         ++ [intercalate "," (sort (splitOn "," (filterLn (category desc))))]
 
 
 showModuleName :: ModuleName -> String
 showModuleName mname = (display mname)
-
 
 showPkgName :: PackageDescription -> String
 showPkgName desc = unPackageName (pkgName (package desc))
 
 showPkgVer :: PackageDescription -> String
 showPkgVer desc = display (pkgVersion (package desc))
+
+showPkgSta :: PackageDescription -> String
+showPkgSta desc = show (stability desc)
+
+showPkgCat :: PackageDescription -> String
+showPkgCat desc = show (category desc)
 
 showVersionInterval :: [VersionInterval] -> String
 showVersionInterval [] = ""
