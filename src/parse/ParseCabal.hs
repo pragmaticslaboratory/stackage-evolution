@@ -35,7 +35,7 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
             Right d          -> return $
                                intercalate ";" $ 
                                -- showPackageHeader cabalFile d ++
-                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> unPackageName x) $ nub $ extractDeps d)] -- ++
+                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> (showDepsName x) ++ (showVersionRange y)) $ nub $ extractDeps d)] -- ++
                                --[intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
                                --[intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
                                --[intercalate "," (mainModules d)]                               
@@ -88,6 +88,12 @@ showPkgSta desc = show (stability desc)
 
 showPkgCat :: PackageDescription -> String
 showPkgCat desc = show (category desc)
+
+showDepsName :: PackageName -> String
+showDepsName = show
+
+showVersionRange :: VersionRange -> String
+showVersionRange = show
 
 showVersionInterval :: [VersionInterval] -> String
 showVersionInterval [] = ""
