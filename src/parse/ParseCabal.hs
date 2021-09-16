@@ -1,24 +1,20 @@
 import System.Environment
 import System.IO
-
 import Debug.Trace
-
 import Distribution.Package
 import Distribution.PackageDescription
 import Distribution.PackageDescription.Parsec
 import Distribution.Version
 import Distribution.Text
+import Distribution.Pretty
+import Distribution.CabalSpecVersion
 import Distribution.ModuleName hiding(main)
-
 import Data.List
 import Data.List.Split
 import qualified Data.ByteString.Char8 as B
-
 import Control.Monad
---import Control.Monad.Parallel as MP
-
-
 import Text.PrettyPrint
+import GHC.Show (Show(showsPrec))
 
 main :: IO ()
 main = do files <- getContents
@@ -33,9 +29,9 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
           case result of
             Left (_, errors) -> error $ "Parse Error for cabal file: " ++ cabalFile
             Right d          -> return $
-                               intercalate ";" $
+                               intercalate ";" $ 
                                showPackageHeader cabalFile d ++
-                               [intercalate "," $ sort $ (mapOrEmpty (\(Dependency x y _) -> unPackageName x) $ nub $ extractDeps d)] ++
+                               [intercalate "," $ sort $ (mapOrEmpty (\dependency -> prettyShow (simplifyDependency dependency)) $ nub $ extractDeps d)] ++
                                [intercalate "," (mapOrEmpty showModuleName (exposedModules d))] ++
                                [intercalate "," (mapOrEmpty id $ getSrcDirs d)] ++
                                [intercalate "," (mainModules d)]                               
@@ -44,7 +40,7 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
                 
 
 extractDeps :: GenericPackageDescription -> [Dependency]
-extractDeps d = ldeps ++ edeps
+extractDeps d = ldeps ++ edeps -- library deps - external deps (?)
   where ldeps = case (condLibrary d) of
                 Nothing -> []
                 Just c -> condTreeConstraints c
@@ -69,14 +65,13 @@ showPackageHeader :: String -> GenericPackageDescription -> [String]
 showPackageHeader cabalFile d = let desc = packageDescription d
                       in [showPkgName desc
                          , showPkgVer desc
-                         , stability desc
+                         , showPkgSta desc
+                         , showPkgCat desc
                          , cabalFile]
-                         ++ [intercalate "," (sort (splitOn "," (filterLn (category desc))))]
 
 
 showModuleName :: ModuleName -> String
 showModuleName mname = (display mname)
-
 
 showPkgName :: PackageDescription -> String
 showPkgName desc = unPackageName (pkgName (package desc))
@@ -84,18 +79,14 @@ showPkgName desc = unPackageName (pkgName (package desc))
 showPkgVer :: PackageDescription -> String
 showPkgVer desc = display (pkgVersion (package desc))
 
-showVersionInterval :: [VersionInterval] -> String
-showVersionInterval [] = ""
-showVersionInterval (((LowerBound lv lb), (UpperBound uv ub)) : vis) = showLowerBound lb ++ show lv ++ ", " ++ show uv ++ showUpperBound ub
-showVersionInterval (((LowerBound lv lb), NoUpperBound) : vis)       = showLowerBound lb ++ show lv ++ ", ... "
+showPkgSta :: PackageDescription -> String
+showPkgSta desc = show (stability desc)
 
-showLowerBound :: Bound -> String
-showLowerBound InclusiveBound = "["
-showLowerBound ExclusiveBound = "]"
+showPkgCat :: PackageDescription -> String
+showPkgCat desc = show (category desc)
 
-showUpperBound :: Bound -> String
-showUpperBound InclusiveBound = "]"
-showUpperBound ExclusiveBound = "["
+showDepsName :: PackageName -> String
+showDepsName depsName = unPackageName depsName
 
 mapOrElse :: (a -> b) -> [a] -> b -> [b]
 mapOrElse _ [] d = [d]
@@ -103,10 +94,3 @@ mapOrElse f l  _ = map f l
 
 mapOrEmpty :: (a -> String) -> [a] -> [String]
 mapOrEmpty f l = mapOrElse f l ""
-
-filterLn = filter (/= '\n')
-
-showPkgExesBuildInfo :: GenericPackageDescription -> String
-showPkgExesBuildInfo d = (concatMap (\(_, ctree) ->
-                            (show (buildInfo (condTreeData ctree))))
-                            (condExecutables d))

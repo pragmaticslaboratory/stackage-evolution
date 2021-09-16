@@ -3,4 +3,4 @@
 PackageImports
 PackageInfoJSON
 ParseCabal
-
+*.exe

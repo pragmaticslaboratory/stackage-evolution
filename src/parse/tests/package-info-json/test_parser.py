@@ -11,7 +11,7 @@ def run_parser(case_path):
     ]
 
     complated_process = subprocess.run(
-        os.path.join(os.path.dirname(__file__), "../PackageInfoJSON"),
+        os.path.join(os.path.dirname(__file__), "../../PackageInfoJSON"),
         stdout=subprocess.PIPE,
         input="\n".join(path_list),
         text=True,
