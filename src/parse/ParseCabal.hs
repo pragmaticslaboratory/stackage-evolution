@@ -1,8 +1,6 @@
 import System.Environment
 import System.IO
-
 import Debug.Trace
-
 import Distribution.Package
 import Distribution.PackageDescription
 import Distribution.PackageDescription.Parsec
@@ -11,15 +9,10 @@ import Distribution.Text
 import Distribution.Pretty
 import Distribution.CabalSpecVersion
 import Distribution.ModuleName hiding(main)
-
 import Data.List
 import Data.List.Split
 import qualified Data.ByteString.Char8 as B
-
 import Control.Monad
---import Control.Monad.Parallel as MP
-
-
 import Text.PrettyPrint
 import GHC.Show (Show(showsPrec))
 
@@ -47,7 +40,7 @@ parseCabalFile cabalFile = withFile cabalFile ReadMode $ \handle -> do
                 
 
 extractDeps :: GenericPackageDescription -> [Dependency]
-extractDeps d = ldeps ++ edeps -- library deps (?) - external deps (?)
+extractDeps d = ldeps ++ edeps -- library deps - external deps (?)
   where ldeps = case (condLibrary d) of
                 Nothing -> []
                 Just c -> condTreeConstraints c
@@ -95,32 +88,9 @@ showPkgCat desc = show (category desc)
 showDepsName :: PackageName -> String
 showDepsName depsName = unPackageName depsName
 
--- showVersionRange :: VersionRange -> String
--- showVersionRange versionRange = fmap pretty (simpleParse CabalSpecV1_2 versionRange :: Maybe VersionRange)
-
-showVersionInterval :: [VersionInterval] -> String
-showVersionInterval [] = ""
-showVersionInterval (((LowerBound lv lb), (UpperBound uv ub)) : vis) = showLowerBound lb ++ show lv ++ ", " ++ show uv ++ showUpperBound ub
-showVersionInterval (((LowerBound lv lb), NoUpperBound) : vis)       = showLowerBound lb ++ show lv ++ ", ... "
-
-showLowerBound :: Bound -> String
-showLowerBound InclusiveBound = "["
-showLowerBound ExclusiveBound = "]"
-
-showUpperBound :: Bound -> String
-showUpperBound InclusiveBound = "]"
-showUpperBound ExclusiveBound = "["
-
 mapOrElse :: (a -> b) -> [a] -> b -> [b]
 mapOrElse _ [] d = [d]
 mapOrElse f l  _ = map f l
 
 mapOrEmpty :: (a -> String) -> [a] -> [String]
 mapOrEmpty f l = mapOrElse f l ""
-
-filterLn = filter (/= '\n')
-
-showPkgExesBuildInfo :: GenericPackageDescription -> String
-showPkgExesBuildInfo d = (concatMap (\(_, ctree) ->
-                            (show (buildInfo (condTreeData ctree))))
-                            (condExecutables d))
