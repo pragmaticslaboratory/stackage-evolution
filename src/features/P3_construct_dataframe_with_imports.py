@@ -6,9 +6,6 @@ from __future__ import print_function
 from datetime import datetime
 
 import os
-import argparse
-import logging
-import sys
 import pickle
 import pandas as pd
 import subprocess

@@ -5,14 +5,8 @@ from __future__ import print_function
 
 from datetime import datetime
 
-import argparse
-import logging
-import sys
 import copy
-import os
 import pandas as pd
-import numpy as np
-import scipy.stats as ss
 
 
 def chunks(l, n):

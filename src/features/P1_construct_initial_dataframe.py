@@ -5,8 +5,6 @@ from datetime import datetime
 
 import csv as csv
 import pandas as pd
-import pickle
-
 ####################################################################################
 # We parse the package-catalog CSV file to construct the initial dataframe
 # The dataframe is indexed by package name, and holds the following columns:

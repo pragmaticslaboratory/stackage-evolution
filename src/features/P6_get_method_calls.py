@@ -1,48 +1,49 @@
-import argparse
 from subprocess import PIPE
 import subprocess
 import pandas as pd
 import numpy as np
 import os
 
-parser = argparse.ArgumentParser()
-parser.add_argument("df", help="Dataframe file with package imports")
 
-args = parser.parse_args()
-df = pd.read_pickle(args.df)
+def get_methods_calls(df_file, logging):
 
-df["files-info"] = str(np.nan)
+    df = pd.read_pickle(df_file)
 
-for index, pkg in df.iterrows():
-    print("##################################")
-    print(f"################# {index}")
-    print("##################################")
+    df["files-info"] = str(np.nan)
 
-    provided_modules_found = pkg["provided-modules-found"]
-    main_modules_found = pkg["main-modules-found"]
-    cabal_file = pkg["cabal-file"]
+    for index, pkg in df.iterrows():
+        logging.info("##################################")
+        logging.info(f"################# {index}")
+        logging.info("##################################")
 
-    path_list = []
+        provided_modules_found = pkg["provided-modules-found"]
+        main_modules_found = pkg["main-modules-found"]
+        cabal_file = pkg["cabal-file"]
 
-    path_list.append(cabal_file)
+        path_list = []
 
-    for path in main_modules_found:
-        path_list.append(path.strip())
+        path_list.append(cabal_file)
 
-    for (module, path) in provided_modules_found:
-        path_list.append(path.strip())
+        for path in main_modules_found:
+            path_list.append(path.strip())
 
-    paths_for_input = "\n".join(path_list)
+        for (module, path) in provided_modules_found:
+            path_list.append(path.strip())
 
-    complated_process = subprocess.run(
-        os.path.join(os.path.dirname(__file__), '../parse/PackageInfoJSON'),
-        stdout=PIPE,
-        input=paths_for_input,
-        text=True
-    )
+        paths_for_input = "\n".join(path_list)
 
-    output = complated_process.stdout
+        complated_process = subprocess.run(
+            os.path.join(os.path.dirname(__file__),
+                         '../parse/PackageInfoJSON'),
+            stdout=PIPE,
+            input=paths_for_input,
+            text=True
+        )
 
-    df.at[index, "files-info"] = output
+        output = complated_process.stdout
 
-df.to_pickle(args.df)
+        df.at[index, "files-info"] = output
+
+    df.to_pickle(df_file)
+    logging.info("Finishing get methods")
+    return df_file
