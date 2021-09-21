@@ -5,7 +5,11 @@ from __future__ import print_function
 
 from datetime import datetime
 
-import argparse, logging, sys, copy, os
+import argparse
+import logging
+import sys
+import copy
+import os
 import pandas as pd
 import numpy as np
 import scipy.stats as ss
@@ -13,12 +17,12 @@ import scipy.stats as ss
 
 def chunks(l, n):
     """Yield successive n-sized chunks from l."""
-    for i in xrange(0, len(l), n):
-        yield l[i : i + n]
+    for i in range(0, len(l), n):
+        yield l[i: i + n]
 
 
 ####################################################################################
-def generateDataframeByCategory(df):
+def generateDataframeByCategory(df, df_file, logging):
     """Takes a dataframe where a package has 1+ categories, and generates a new
     dataframe with unique package-category combinations, hence reflecting
     the multiplicity of categories by package
@@ -49,26 +53,28 @@ def generateDataframeByCategory(df):
         "category" if x == "categories" else x for x in catdf.columns.tolist()
     ]
     catdf["category"] = catdf["category"].apply(str)
-    catdf.to_pickle("%s-with-monad-usage-by-category.df" % args.df.replace(".df", ""))
+    catdf.to_pickle("%s-with-monad-usage-by-category.df" %
+                    df_file.replace(".df", ""))
     logging.info("Done creating dataframe split by category")
 
+    return "%s-with-monad-usage-by-category.df" % df_file.replace(".df", "")
 
 ####################################################################################
-def generateMonadUsageDataframe():
+
+
+def generate_monad_usage_dataframe(df_file, logging):
     """Takes a dataframe with the information of imported modules, and yields
     a new dataframe with the usage information of each monad in the mtl_modules list.
     """
 
-    df = pd.read_pickle(args.df)
+    df = pd.read_pickle(df_file)
 
     listToProcess = df.index.tolist()
-    pkgTotal = len(listToProcess)
     nthreads = 4
     step = max(1, len(listToProcess) / nthreads)
 
     packagesMonadUsage = {}
 
-    pkgNum = 1
     logging.info("Starting work at %s" % str(datetime.now()))
 
     for chunk in chunks(listToProcess, step):
@@ -94,7 +100,7 @@ def generateMonadUsageDataframe():
     #####################################################################
     logging.info("Computing monad usage")
 
-    ## Add columns to dataframe
+    # Add columns to dataframe
 
     moduleMonadUsageSeries = {}
 
@@ -102,56 +108,33 @@ def generateMonadUsageDataframe():
     for mtl_mod in mtl_modules:
         moduleMonadUsageSeries[mtl_mod] = []
         for idx in listToProcess:
-            moduleMonadUsageSeries[mtl_mod].append(packagesMonadUsage[idx][mtl_mod])
-
-    for mtl_mod in mtl_modules:
-        df[mtl_mod] = pd.Series(moduleMonadUsageSeries[mtl_mod], index=df.index)
+            moduleMonadUsageSeries[mtl_mod].append(
+                packagesMonadUsage[idx][mtl_mod])
+        df[mtl_mod] = pd.Series(
+            moduleMonadUsageSeries[mtl_mod], index=df.index)
 
     ### For other non-MTL modules ##########################################################
     for other_mod in other_modules:
         moduleMonadUsageSeries[other_mod] = []
         for idx in listToProcess:
-            moduleMonadUsageSeries[other_mod].append(packagesMonadUsage[idx][other_mod])
+            moduleMonadUsageSeries[other_mod].append(
+                packagesMonadUsage[idx][other_mod])
+        df[other_mod] = pd.Series(
+            moduleMonadUsageSeries[other_mod], index=df.index)
 
-    for other_mod in other_modules:
-        df[other_mod] = pd.Series(moduleMonadUsageSeries[other_mod], index=df.index)
-
-    df.to_pickle(full_df_path)
-    generateDataframeByCategory(df)
+    df.to_pickle(df_file)
+    generateDataframeByCategory(df, df_file, logging)
     logging.info("Finishing work at %s" % str(datetime.now()))
 
 
 ################################################################################
 
-parser = argparse.ArgumentParser()
-parser.add_argument("df", help="Dataframe file with package imports")
-parser.add_argument(
-    "-v",
-    "--verbose",
-    help="Set log level to DEBUG to increase output verbosity",
-    action="store_true",
-)
-parser.add_argument(
-    "-q",
-    "--quiet",
-    help="Set log level to ERROR to decrease output verbosity",
-    action="store_true",
-)
-
-args = parser.parse_args()
-if args.verbose:
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
-elif args.quiet:
-    logging.basicConfig(level=logging.ERROR, stream=sys.stdout)
-else:
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-
 ##################################################################
-## These are all the modules provided by the mtl library
-## which will be matched against the imports of every package.
+# These are all the modules provided by the mtl library
+# which will be matched against the imports of every package.
 ##
 
-## https://wiki.haskell.org/All_About_Monads
+# https://wiki.haskell.org/All_About_Monads
 ##
 
 mtl_modules = [
@@ -182,12 +165,3 @@ mtl_modules = [
 ]
 
 other_modules = ["Control.Monad", "System.IO"]
-
-
-####################################################################################
-## Do not generate full dataframe if it already exists
-full_df_path = "%s-with-monad-usage.df" % args.df.replace(".df", "")
-if not os.path.isfile(full_df_path):
-    generateMonadUsageDataframe()
-else:
-    logging.info("Not creating file %s because it already exists" % full_df_path)

@@ -6,7 +6,8 @@ from util.parser import setup_command_line
 from features.P0_create_package_catalog import create_package_catalog
 from features.P1_construct_initial_dataframe import process_catalog_csv
 from features.P2_construct_dataframe_with_paths import construct_df_with_paths
-
+from features.P3_construct_dataframe_with_imports import construct_df_with_imports
+from features.P4_construct_dataframe_with_mtl_usage import generate_monad_usage_dataframe
 
 PATH = "C:/Users/nicol/Desktop/lts/lts-test"  # directory of packages
 parser = setup_command_line()
@@ -19,3 +20,6 @@ initial_df = process_catalog_csv(os.path.join(
     os.path.dirname(__file__), csv_file), logging)
 
 df_with_paths = construct_df_with_paths(PATH, initial_df, logging)
+df_with_imports = construct_df_with_imports(df_with_paths, logging)
+df_with_monads_categories = generate_monad_usage_dataframe(
+    df_with_imports, logging)

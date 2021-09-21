@@ -69,9 +69,10 @@ def construct_df_with_paths(path_file, df_file, logging):
         commonExts = ["hs", "lhs"]
         preprocExts = ["hsc", "gc", "chs"]
 
-        pkgProvidedModules = row["provided-modules"]
+        pkgProvidedModules = row["provided-modules"].split(',')
         pkgProvidedModulesFound = []
         pkgProvidedModulesNotFound = []
+        src_direct = row["src-dirs"].split(',')
         for modname in pkgProvidedModules:
 
             # Omit ghc-specific "virtual" Paths_* modules
@@ -84,7 +85,7 @@ def construct_df_with_paths(path_file, df_file, logging):
             for ext in commonExts + preprocExts:
                 normalized_mod_path = "%s.%s" % (
                     modname.replace(".", "/"), ext)
-                for srcdir in row["src-dirs"]:
+                for srcdir in src_direct:
                     modPath = filepath_pattern % (
                         path_file,
                         row["package"],
@@ -237,5 +238,7 @@ def construct_df_with_paths(path_file, df_file, logging):
         packageIdxMainModulesNotfound, index=df.index)
 
     df.to_pickle("%s-with-paths.df" % df_file.replace(".df", ""))
+
+    logging.debug(df["provided-modules-notfound"])
 
     return "%s-with-paths.df" % df_file.replace(".df", "")

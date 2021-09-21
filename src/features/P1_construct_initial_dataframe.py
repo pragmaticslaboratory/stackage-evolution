@@ -52,11 +52,9 @@ def process_catalog_csv(csvFilename, logger):
         metadata_list.append(metadata)
 
     df = pd.DataFrame(metadata_list, columns=['package', 'version', 'stability', 'cabal-file', 'categories',
-                                              'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct']).transpose()
+                                              'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct'])
     df.sort_index(inplace=True)
     df.to_pickle("./package-dataframe.df")
-
-    logger.debug(df)
 
     logger.info("Finishing work at %s" % str(datetime.now()))
 
