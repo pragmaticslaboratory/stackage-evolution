@@ -1,6 +1,7 @@
 import os
 import subprocess
 import copy
+from datetime import datetime
 
 
 def create_csv(data, date_now, logging):
@@ -31,7 +32,8 @@ def create_package_catalog(path, date_now, logging):
     logging.info("Processing package index with root {path}".format(path=path))
     for _, pkg_tuple, _ in walklevel(path, level=0):
         _tmp_pkg_tuple_dirs.extend(pkg_tuple)
-        _tmp_pkg_tuple_dirs = map(lambda x: (x, os.path.join(path, x)), _tmp_pkg_tuple_dirs)
+        _tmp_pkg_tuple_dirs = map(lambda x: (
+            x, os.path.join(path, x)), _tmp_pkg_tuple_dirs)
 
     pkg_dirs = []
     for pkg_tuple in _tmp_pkg_tuple_dirs:
@@ -41,17 +43,19 @@ def create_package_catalog(path, date_now, logging):
             pkg_dirs.append(new_tuple)
 
     total_pkgs = len(list(pkg_dirs))
-    logging.info("Total Packages for Analysis: {total}".format(total=total_pkgs))
+    logging.info(
+        "Total Packages for Analysis: {total}".format(total=total_pkgs))
     logging.info("Starting work at %s" % str(datetime.now()))
 
     package_catalog = list()
     for pkg in pkg_dirs:
         (name, pkg_path, name_version) = pkg
         cabal_file = os.path.join(pkg_path, name_version[0], name + ".cabal")
-        logging.info("Starting work at {cabal_file}".format(cabal_file=cabal_file))
+        logging.info("Starting work at {cabal_file}".format(
+            cabal_file=cabal_file))
 
         completed_process = subprocess.run(
-            "/Users/fruiz/.local/bin/parse-exe",
+            "C:/Users/nicol/Documents/GitHub/stackage-evolution/src/parse/ParseCabal.exe",
             input=cabal_file,
             capture_output=True,
             text=True,
