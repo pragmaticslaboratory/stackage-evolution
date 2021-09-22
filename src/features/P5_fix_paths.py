@@ -23,10 +23,11 @@ def fix_paths(path_file, df_file, logging, lts):
             new_list.append(path)
 
         df.at[index, "main-modules-found"] = new_list
-
+        logging.debug(pkg["cabal-file"])
         cabal_file = pkg["cabal-file"].replace(
             "/Users/fruiz/Desktop/github/papers-stackage/pipelines/scripts/StackageDownload", path_file)
         cabal_file = cabal_file.replace(lts, lts.replace(".", "-"))
+        logging.debug(cabal_file)
         df.at[index, "cabal-file"] = cabal_file
 
     df.to_pickle(df_file)

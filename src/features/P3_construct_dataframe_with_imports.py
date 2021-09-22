@@ -56,7 +56,7 @@ def construct_df_with_imports(df_file, logging):
                     outerror = ""
                 else:
                     subproc = subprocess.Popen(
-                        "../static-analysis/PackageImports",
+                        "C:/Users/nicol/Documents/GitHub/stackage-evolution/src/parse/PackageImports.exe",
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE,
                         stderr=subprocess.STDOUT,

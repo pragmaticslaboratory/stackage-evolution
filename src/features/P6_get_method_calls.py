@@ -34,7 +34,7 @@ def get_methods_calls(df_file, logging):
 
         complated_process = subprocess.run(
             os.path.join(os.path.dirname(__file__),
-                         '../parse/PackageInfoJSON'),
+                         'C:/Users/nicol/Documents/GitHub/stackage-evolution/src/parse/PackageInfoJSON.exe'),
             stdout=PIPE,
             input=paths_for_input,
             text=True
