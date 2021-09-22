@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 import os
+from numpy import empty
 import pandas as pd
 
 
@@ -111,11 +112,15 @@ def construct_df_with_paths(path_file, df_file, logging):
         # Sanity check to spot weird modules
         # For debugging weird packages
         if logging.getLogger().isEnabledFor(logging.DEBUG):
-            pkgWeirdModules = [
-                item
-                for item in pkgProvidedModules
-                if item not in (pkgProvidedModulesFound + pkgProvidedModulesNotFound)
-            ]
+            pkgWeirdModules = []
+            logging.debug(pkgProvidedModulesNotFound)
+            for item in pkgProvidedModules:
+                find = True
+                for mod_name in pkgProvidedModulesFound:
+                    if item == mod_name[0]:
+                        find = False
+                if find and item not in pkgProvidedModulesNotFound:
+                    pkgWeirdModules.append(item)
             logging.info(">> [%s] WEIRD MODULES: %s" % (idx, pkgWeirdModules))
         assert len(pkgProvidedModules) == len(pkgProvidedModulesFound) + len(
             pkgProvidedModulesNotFound
@@ -140,27 +145,28 @@ def construct_df_with_paths(path_file, df_file, logging):
             "[%s] Updating main-modules paths with download dir %s" % (
                 idx, path_file)
         )
-        pkgMainModules = row["main-modules"]
+        pkgMainModules = row["main-modules"].split(',')
         pkgMainModulesFound = []
         pkgMainModulesNotFound = []
+
         for mainMod in pkgMainModules:
             found = False
-            for srcdir in [""] + row["src-dirs"]:
+            for srcdir in src_direct:
                 mainPath = os.path.join(
                     path_file,
                     row["package"],
                     "%s-%s" % (row["package"], row["version"]),
                     srcdir,
-                    mainMod,
+                    mainMod
                 )
                 found = os.path.isfile(mainPath)
                 if found:
                     pkgMainModulesFound.append(mainPath)
                     break
             if not found:
-                logging.warn("[%s] Main module not found: %s" % (idx, mainMod))
+                logging.warn("[%s] Main module not found: %s" %
+                             (idx, mainMod))
                 pkgMainModulesNotFound.append(mainPath)
-
         # Sanity check to spot weird modules
         # For debugging weird packages
         if logging.getLogger().isEnabledFor(logging.DEBUG):
@@ -235,6 +241,7 @@ def construct_df_with_paths(path_file, df_file, logging):
 
     df.to_pickle("%s-with-paths.df" % df_file.replace(".df", ""))
 
-    logging.debug(df["provided-modules-notfound"])
+    logging.debug(df["provided-modules-found"])
 
+    logging.info('Finishing P2')
     return "%s-with-paths.df" % df_file.replace(".df", "")

@@ -8,8 +8,8 @@ import pandas as pd
 ####################################################################################
 # We parse the package-catalog CSV file to construct the initial dataframe
 # The dataframe is indexed by package name, and holds the following columns:
-##     - version
-##     - stability
+# - version
+# - stability
 # - cabal-file: path to the cabal file that generated this data
 # - deps: list of package dependencies
 # - provided-modules: list of module names, the modules exposed by the package
@@ -53,6 +53,7 @@ def process_catalog_csv(csvFilename, logger):
                                               'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct'])
     df.sort_index(inplace=True)
     df.to_pickle("./package-dataframe.df")
+    logger.debug(df[['package', 'main-modules']])
 
     logger.info("Finishing work at %s" % str(datetime.now()))
 

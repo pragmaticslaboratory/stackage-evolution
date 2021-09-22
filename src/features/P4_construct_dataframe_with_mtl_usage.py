@@ -29,7 +29,7 @@ def generateDataframeByCategory(df, df_file, logging):
     for idx in catdf.index:
         if len(catdf.loc[idx]["categories"]) == 1:
             theCat = catdf.loc[idx]["categories"][0]
-            catdf.set_value(idx, "categories", theCat)
+            catdf.at[idx, "categories"] = theCat
 
     additionalrows = []
 
@@ -65,7 +65,7 @@ def generate_monad_usage_dataframe(df_file, logging):
 
     listToProcess = df.index.tolist()
     nthreads = 4
-    step = max(1, len(listToProcess) / nthreads)
+    step = int(max(1, len(listToProcess) / nthreads))
 
     packagesMonadUsage = {}
 
