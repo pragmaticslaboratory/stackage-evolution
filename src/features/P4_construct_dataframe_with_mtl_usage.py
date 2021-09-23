@@ -16,7 +16,7 @@ def chunks(l, n):
 
 
 ####################################################################################
-def generateDataframeByCategory(df, df_file, logging):
+def generateDataframeByCategory(df, df_file, logging, lts):
     """Takes a dataframe where a package has 1+ categories, and generates a new
     dataframe with unique package-category combinations, hence reflecting
     the multiplicity of categories by package
@@ -47,16 +47,17 @@ def generateDataframeByCategory(df, df_file, logging):
         "category" if x == "categories" else x for x in catdf.columns.tolist()
     ]
     catdf["category"] = catdf["category"].apply(str)
-    catdf.to_pickle("%s-with-monad-usage-by-category.df" %
-                    df_file.replace(".df", ""))
+    df_path = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s-by-category.df" % (
+        lts, lts)
+    catdf.to_pickle(df_path)
     logging.info("Done creating dataframe split by category")
 
-    return "%s-with-monad-usage-by-category.df" % df_file.replace(".df", "")
+    return df_path
 
 ####################################################################################
 
 
-def generate_monad_usage_dataframe(df_file, logging):
+def generate_monad_usage_dataframe(df_file, logging, lts):
     """Takes a dataframe with the information of imported modules, and yields
     a new dataframe with the usage information of each monad in the mtl_modules list.
     """
@@ -80,6 +81,7 @@ def generate_monad_usage_dataframe(df_file, logging):
             for mtl_mod in mtl_modules:
                 if mtl_mod in imods:
                     pkgMonadUsage[mtl_mod] = 1
+                    logging.debug(mtl_mod)
                 else:
                     pkgMonadUsage[mtl_mod] = 0
 
@@ -106,7 +108,6 @@ def generate_monad_usage_dataframe(df_file, logging):
                 packagesMonadUsage[idx][mtl_mod])
         df[mtl_mod] = pd.Series(
             moduleMonadUsageSeries[mtl_mod], index=df.index)
-
     ### For other non-MTL modules ##########################################################
     for other_mod in other_modules:
         moduleMonadUsageSeries[other_mod] = []
@@ -115,9 +116,9 @@ def generate_monad_usage_dataframe(df_file, logging):
                 packagesMonadUsage[idx][other_mod])
         df[other_mod] = pd.Series(
             moduleMonadUsageSeries[other_mod], index=df.index)
-
-    df.to_pickle(df_file)
-    generateDataframeByCategory(df, df_file, logging)
+    df.to_pickle(
+        "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s.df" % (lts, lts))
+    generateDataframeByCategory(df, df_file, logging, lts)
     logging.info("Finishing work at %s" % str(datetime.now()))
 
 

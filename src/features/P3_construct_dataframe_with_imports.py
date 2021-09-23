@@ -9,6 +9,7 @@ import os
 import pickle
 import pandas as pd
 import subprocess
+from subprocess import PIPE
 import re
 
 ###########################################################################################
@@ -34,8 +35,9 @@ def construct_df_with_imports(df_file, logging):
         pkg, mods, mains, cabal_file = (
             idx,
             list(map(lambda x: x[1], row["provided-modules-found"])),
-            list(map(lambda x: x, row["main-modules-found"])),
-            df.loc[idx]["cabal-file"],
+            list(
+                map(lambda x: x, row["main-modules-found"])),
+            df.loc[idx]["cabal-file"].replace('\\', '/'),
         )
         package_paths = [cabal_file] + mods + mains
         paths_for_input = "\n".join(package_paths)
@@ -55,15 +57,14 @@ def construct_df_with_imports(df_file, logging):
                     output = ""
                     outerror = ""
                 else:
-                    subproc = subprocess.Popen(
-                        "C:/Users/nicol/Documents/GitHub/stackage-evolution/src/parse/PackageImports.exe",
-                        stdin=subprocess.PIPE,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.STDOUT,
-                        shell=True,
+                    complated_process = subprocess.run(
+                        os.path.join(os.path.dirname(__file__),
+                                     '../parse/PackageImports.exe'),
+                        stdout=PIPE,
+                        input=paths_for_input,
+                        text=True
                     )
-                    output, outerror = subproc.communicate(
-                        input=paths_for_input)
+                    output = complated_process.stdout
                     output = re.sub(r"^\[.*\]", "", output).strip()
                     output = re.sub(r"^\".*\"", "", output).strip()
                     output = re.sub(r"^\[.*\]", "", output).strip()
@@ -103,6 +104,7 @@ def construct_df_with_imports(df_file, logging):
     logging.info("len(listToProcess): %s" % len(df))
     logging.info("len(packageImports): %s" % len(packageImports))
 
+    logging.debug(packageImports)
     for idx, row in df.iterrows():
         moduleImports.append(packageImports[idx].split(","))
 

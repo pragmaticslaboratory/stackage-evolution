@@ -66,10 +66,10 @@ def construct_df_with_paths(path_file, df_file, logging):
         commonExts = ["hs", "lhs"]
         preprocExts = ["hsc", "gc", "chs"]
 
-        pkgProvidedModules = row["provided-modules"].split(',')
+        pkgProvidedModules = row["provided-modules"]
         pkgProvidedModulesFound = []
         pkgProvidedModulesNotFound = []
-        src_direct = row["src-dirs"].split(',')
+        src_direct = row["src-dirs"]
         for modname in pkgProvidedModules:
 
             # Omit ghc-specific "virtual" Paths_* modules
@@ -145,7 +145,7 @@ def construct_df_with_paths(path_file, df_file, logging):
             "[%s] Updating main-modules paths with download dir %s" % (
                 idx, path_file)
         )
-        pkgMainModules = row["main-modules"].split(',')
+        pkgMainModules = row["main-modules"]
         pkgMainModulesFound = []
         pkgMainModulesNotFound = []
 
@@ -158,7 +158,7 @@ def construct_df_with_paths(path_file, df_file, logging):
                     "%s-%s" % (row["package"], row["version"]),
                     srcdir,
                     mainMod
-                )
+                ).replace('\\', '/')
                 found = os.path.isfile(mainPath)
                 if found:
                     pkgMainModulesFound.append(mainPath)

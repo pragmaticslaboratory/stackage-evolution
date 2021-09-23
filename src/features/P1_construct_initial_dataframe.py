@@ -24,21 +24,24 @@ def depends_of_mtl(data):
 
 
 def build_metadata(data):
+    dependencies_version = list(
+        map(lambda x: tuple(x.split(' ', 1)), data[5].split(',')))
     return {
         'package': data[0],
         'version': data[1],
         'stability': list(map(lambda x: x.strip().lower(), data[2].replace('"', "").split(','))),
         'cabal-file': data[4],
         'categories': list(map(lambda x: x.strip().lower(), data[3].replace('"', "").split(','))),
-        'deps': data[5].split(','),
-        'provided-modules': data[6],
-        'src-dirs': data[7],
-        'main-modules': data[8],
-        'mtl-direct': depends_of_mtl(data)
+        'deps': list(map(lambda x: x[0], dependencies_version)),
+        'provided-modules': data[6].split(','),
+        'src-dirs': data[7].split(','),
+        'main-modules': data[8].split(','),
+        'mtl-direct': depends_of_mtl(data),
+        'version-range-deps': dependencies_version
     }
 
 
-def process_catalog_csv(csvFilename, logger):
+def process_catalog_csv(csvFilename, logger, lts):
     logger.info("Constructing initial dataframe")
     data = []
     for row in csv.reader(open(csvFilename), delimiter=";"):
@@ -50,11 +53,13 @@ def process_catalog_csv(csvFilename, logger):
         metadata_list.append(metadata)
 
     df = pd.DataFrame(metadata_list, columns=['package', 'version', 'stability', 'cabal-file', 'categories',
-                                              'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct'])
+                      'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct', 'version-range-deps'])
     df.sort_index(inplace=True)
-    df.to_pickle("./package-dataframe.df")
+    df_path = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s.df" % (
+        lts, lts)
+    df.to_pickle(df_path)
     logger.debug(df[['package', 'main-modules']])
 
     logger.info("Finishing work at %s" % str(datetime.now()))
 
-    return "./package-dataframe.df"
+    return df_path

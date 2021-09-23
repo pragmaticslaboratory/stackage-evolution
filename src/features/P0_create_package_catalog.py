@@ -4,10 +4,11 @@ import copy
 from datetime import datetime
 
 
-def create_csv(data, date_now, logging):
+def create_csv(data, date_now, logging, lts):
     logging.info("Writing results to file")
     try:
-        csv_file_name = "packages-catalog-{date}.csv".format(date=date_now)
+        csv_file_name = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/packages-catalog-{date}.csv".format(
+            date=date_now) % lts
         with open(csv_file_name, "w") as csv_file:
             csv_file.write("\n".join(data))
         logging.info("CSV file created")
@@ -27,7 +28,7 @@ def walklevel(some_dir, level=1):
             del dirs[:]
 
 
-def create_package_catalog(path, date_now, logging):
+def create_package_catalog(path, date_now, logging, lts):
     _tmp_pkg_tuple_dirs = []
     logging.info("Processing package index with root {path}".format(path=path))
     for _, pkg_tuple, _ in walklevel(path, level=0):
@@ -55,7 +56,8 @@ def create_package_catalog(path, date_now, logging):
             cabal_file=cabal_file))
 
         completed_process = subprocess.run(
-            "C:/Users/nicol/Documents/GitHub/stackage-evolution/src/parse/ParseCabal.exe",
+            os.path.join(os.path.dirname(__file__),
+                         '../parse/ParseCabal.exe'),
             input=cabal_file,
             capture_output=True,
             text=True,
@@ -65,4 +67,4 @@ def create_package_catalog(path, date_now, logging):
         if completed_process.returncode == 0:
             package_catalog.append(completed_process.stdout)
 
-    return create_csv(package_catalog, date_now, logging)
+    return create_csv(package_catalog, date_now, logging, lts)
