@@ -32,12 +32,12 @@ def build_metadata(data):
         'stability': list(map(lambda x: x.strip().lower(), data[2].replace('"', "").split(','))),
         'cabal-file': data[4],
         'categories': list(map(lambda x: x.strip().lower(), data[3].replace('"', "").split(','))),
-        'deps': list(map(lambda x: x[0], dependencies_version)),
+        'deps': list(map(lambda x: x[0], dependencies_version)) if len(data[5]) != 0 else [],
         'provided-modules': data[6].split(','),
         'src-dirs': data[7].split(','),
         'main-modules': data[8].split(','),
         'mtl-direct': depends_of_mtl(data),
-        'version-range-deps': dependencies_version
+        'version-range-deps': dependencies_version if len(data[5]) != 0 else []
     }
 
 
@@ -48,11 +48,14 @@ def process_catalog_csv(csvFilename, logger, lts):
         data.append(row)
 
     metadata_list = []
+    meta_index = []
     for row in data:
+        name_index = row[0]+'-'+row[1]
+        meta_index.append(name_index)
         metadata = build_metadata(row)
         metadata_list.append(metadata)
 
-    df = pd.DataFrame(metadata_list, columns=['package', 'version', 'stability', 'cabal-file', 'categories',
+    df = pd.DataFrame(metadata_list, index=meta_index, columns=['package', 'version', 'stability', 'cabal-file', 'categories',
                       'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct', 'version-range-deps'])
     df.sort_index(inplace=True)
     df_path = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s.df" % (

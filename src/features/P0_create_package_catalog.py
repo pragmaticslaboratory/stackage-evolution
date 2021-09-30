@@ -1,4 +1,5 @@
 import os
+import io
 import subprocess
 import copy
 from datetime import datetime
@@ -28,6 +29,19 @@ def walklevel(some_dir, level=1):
             del dirs[:]
 
 
+def clean_utf8(path_file):
+    file = io.open(path_file, 'r', encoding="utf-8")
+
+    test = file.read()
+    text = test.encode("ascii", "replace")
+    text = text.decode()
+    file.close()
+
+    file = io.open(path_file, 'w', encoding="utf-8")
+    file.write(text)
+    file.close()
+
+
 def create_package_catalog(path, date_now, logging, lts):
     _tmp_pkg_tuple_dirs = []
     logging.info("Processing package index with root {path}".format(path=path))
@@ -42,7 +56,7 @@ def create_package_catalog(path, date_now, logging, lts):
         for _, versions, _ in walklevel(pkg_path, level=0):
             new_tuple = copy.deepcopy(pkg_tuple + (versions,))
             pkg_dirs.append(new_tuple)
-
+        logging.debug(pkg_tuple)
     total_pkgs = len(list(pkg_dirs))
     logging.info(
         "Total Packages for Analysis: {total}".format(total=total_pkgs))
@@ -54,7 +68,7 @@ def create_package_catalog(path, date_now, logging, lts):
         cabal_file = os.path.join(pkg_path, name_version[0], name + ".cabal")
         logging.info("Starting work at {cabal_file}".format(
             cabal_file=cabal_file))
-
+        clean_utf8(cabal_file)
         completed_process = subprocess.run(
             os.path.join(os.path.dirname(__file__),
                          '../parse/ParseCabal.exe'),
