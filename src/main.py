@@ -18,9 +18,11 @@ for lts_version in lts_list:
     parser = setup_command_line()
     args = parser.parse_args()
     logging = setup_log_level(args)
+
+    directory_path = os.path.join(os.path.dirname(__file__),
+                                  "../data/test/%s" % lts)
     try:
-        os.mkdir(
-            'C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s' % lts)
+        os.mkdir(directory_path)
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise

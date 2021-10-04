@@ -8,8 +8,10 @@ from datetime import datetime
 def create_csv(data, date_now, logging, lts):
     logging.info("Writing results to file")
     try:
-        csv_file_name = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/packages-catalog-{date}.csv".format(
-            date=date_now) % lts
+        csv_path = os.path.join(os.path.dirname(__file__),
+                                "../../data/test/%s/packages-catalog-{date}.csv".format(
+            date=date_now) % lts)
+        csv_file_name = csv_path
         with open(csv_file_name, "w") as csv_file:
             csv_file.write("\n".join(data))
         logging.info("CSV file created")

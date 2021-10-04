@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 from datetime import datetime
-
+import os
 import csv as csv
 import pandas as pd
 ####################################################################################
@@ -58,8 +58,10 @@ def process_catalog_csv(csvFilename, logger, lts):
     df = pd.DataFrame(metadata_list, index=meta_index, columns=['package', 'version', 'stability', 'cabal-file', 'categories',
                       'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct', 'version-range-deps'])
     df.sort_index(inplace=True)
-    df_path = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s.df" % (
-        lts, lts)
+
+    df_path = os.path.join(os.path.dirname(__file__),
+                           "../../data/test/%s/%s.df" % (
+        lts, lts))
     df.to_pickle(df_path)
     logger.debug(df[['package', 'main-modules']])
 
