@@ -1,0 +1,6 @@
+evalDAVT :: MonadIO m => DAVURL -> DAVT m a -> m (Either String a)
+evalDAVT u f = do
+    ctx <- mkDAVContext u
+    r <- (evalStateT . runExceptT . runDAVT) f ctx
+    closeDAVContext ctx
+    return r
