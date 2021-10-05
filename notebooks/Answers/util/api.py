@@ -3,6 +3,7 @@ import numpy as np
 import math
 import operator
 lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11']
+ops = {'>=': operator.ge, '>': operator.gt, '<=': operator.le, '<': operator.lt, '==': operator.eq}
 
 # returns a list with all the existing packages in some version of LTS
 def get_all_time_packages(df_list):
@@ -410,3 +411,81 @@ def calculate_bottom_dict(data, keylist, bar_idx):
     for idx in range(0, bar_idx):
         cumsum = list(map(operator.add, cumsum, data[keylist[idx]]))
     return cumsum
+
+def compare_range(v, range1, range2=None):
+    (op1, v_range1) = range1
+    if v_range1[-1] == "*":
+        if len(v_range1) - 2 > len(v):
+            print(
+                "not supported case",
+                {"version": v, "len(version)": len(v), "v_range1": v_range1, "len(v_range1)": len(v_range1) - 2},
+            )
+        v_range1 = v_range1.split(".")[:-1]
+        v = ".".join(v.split(".")[0 : len(v_range1)])
+        v_range1 = ".".join(v_range1)
+
+    vrs = version.parse(v)
+    vrs_range1 = version.parse(v_range1)
+
+    if range2 is None:
+        return ops[op1](vrs, vrs_range1)
+
+    (op2, v_range2) = range2
+    vrs_range2 = version.parse(v_range2)
+    return ops[op1](vrs, vrs_range1) and ops[op2](vrs, vrs_range2)
+
+
+def in_range(v, range):
+    ranges = range.split(" && ")
+
+    range1 = re.match("(.*?)(\d.*)", ranges[0]).groups()
+    if len(ranges) == 1:
+        return compare_range(v, range1)
+
+    range2 = re.match("(.*?)(\d.*)", ranges[1]).groups()
+    return compare_range(v, range1, range2)
+
+def foo(df):
+    df['dependencies_status'] = ''
+    for idx, pkg in df.iterrows():
+        dependencies_status = {}
+        for version_range_depencency in pkg["version-range-deps"]:
+            if len(version_range_depencency) != 2:
+                # without dependencies
+                continue
+
+            (name, range) = version_range_depencency
+            if range == "-any":
+                dependencies_status[name] = "ANY"
+                continue
+
+            lts_pkg_index = df.index[df["package"] == name].tolist()
+            if not lts_pkg_index:
+                # package that doesn't exist in the LTS
+                continue
+
+            pkg_index = lts_pkg_index[0]
+            lts_package_version = df.at[pkg_index, "version"]
+            is_in_range = None
+
+            if "||" in range:
+                multiple_ranges = range.split(" || ")
+                is_in_range = any(in_range(lts_package_version, r) for r in multiple_ranges)
+                dependencies_status[name] = "IN_RANGE" if is_in_range else "OUT_RANGE"
+            else:
+                is_in_range = in_range(lts_package_version, range)
+                dependencies_status[name] = "IN_RANGE" if is_in_range else "OUT_RANGE"
+        df.at[idx,'dependencies_status'] = dependencies_status
+        '''if any(dependencies_status[name] == "OUT_RANGE" for name in dependencies_status):
+            out_range_dependencies = dict(filter(lambda status: status[1] == "OUT_RANGE", dependencies_status.items()))
+            out_range_names = list(out_range_dependencies.keys())
+            lts_dependencies_version = list(df[df["package"].isin(out_range_names)]["version"])
+            ranges = dict(filter(lambda range: range[0] in out_range_names, pkg["version-range-deps"]))
+            print(
+                 {
+                     "pkg": pkg["package"],
+                     "deps": out_range_dependencies,
+                     "lts_deps_version": lts_dependencies_version,
+                     "ranges": ranges,
+                 },
+            )'''
