@@ -31,9 +31,9 @@ for lts_version in lts_list:
     csv_file = create_package_catalog(PATH, date_now, logging, lts)
     initial_df = process_catalog_csv(os.path.join(
         os.path.dirname(__file__), csv_file), logging, lts)
-    #df_with_paths = construct_df_with_paths(PATH, initial_df, logging)
-    #df_with_imports = construct_df_with_imports(df_with_paths, logging)
-    # df_with_monads_categories = generate_monad_usage_dataframe(
-    #   df_with_imports, logging, lts)
+    df_with_paths = construct_df_with_paths(PATH, initial_df, logging)
+    df_with_imports = construct_df_with_imports(df_with_paths, logging)
+    df_with_monads_categories = generate_monad_usage_dataframe(
+        df_with_imports, logging, lts)
     # df_fix_paths = fix_paths(PATH, df_with_imports, logging, lts) use in case of change paths
     # df_with_methods = get_methods_calls(df_with_imports, logging)

@@ -7,6 +7,7 @@ from datetime import datetime
 
 import copy
 import pandas as pd
+import os
 
 
 def chunks(l, n):
@@ -47,8 +48,10 @@ def generateDataframeByCategory(df, df_file, logging, lts):
         "category" if x == "categories" else x for x in catdf.columns.tolist()
     ]
     catdf["category"] = catdf["category"].apply(str)
-    df_path = "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s-by-category.df" % (
-        lts, lts)
+
+    df_path = os.path.join(os.path.dirname(__file__),
+                           "../../data/test/%s/%s-by-category.df" % (
+        lts, lts))
     catdf.to_pickle(df_path)
     logging.info("Done creating dataframe split by category")
 
@@ -116,8 +119,11 @@ def generate_monad_usage_dataframe(df_file, logging, lts):
                 packagesMonadUsage[idx][other_mod])
         df[other_mod] = pd.Series(
             moduleMonadUsageSeries[other_mod], index=df.index)
-    df.to_pickle(
-        "C:/Users/nicol/Documents/GitHub/stackage-evolution/data/test/%s/%s.df" % (lts, lts))
+
+    df_path = os.path.join(os.path.dirname(__file__),
+                           "../../data/test/%s/%s.df" % (
+        lts, lts))
+    df.to_pickle(df_path)
     generateDataframeByCategory(df, df_file, logging, lts)
     logging.info("Finishing work at %s" % str(datetime.now()))
 
