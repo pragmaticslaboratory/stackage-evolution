@@ -19,8 +19,7 @@ import pandas as pd
 
 
 def depends_of_mtl(data):
-    dependencies = data[5].split(',')
-    return 1 if 'mtl' in dependencies else 0
+    return 1 if 'mtl' in data[5] else 0
 
 
 def build_metadata(data):
