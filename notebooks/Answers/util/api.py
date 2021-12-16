@@ -4,8 +4,21 @@ import math
 import operator
 import re
 from packaging import version
-lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11']
+import glob
+
+url = '../../data'
+list_url = glob.glob(f"{url}/*")
+lts_list = [lts.split('lts-')[1].replace('-','.') for lts in list_url]
+lts_list = sorted(lts_list, key=lambda x: float(x))
+lts_list = [lts.replace('.','-') for lts in lts_list]
+lts_list.remove('18-18')
+lts_list.insert(18,'18-18')
+#lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11','16-31','17-2','18-6','18-8','18-18']
+
 ops = {'>=': operator.ge, '>': operator.gt, '<=': operator.le, '<': operator.lt, '==': operator.eq}
+def get_lts_list():
+    
+    return lts_list
 
 # returns a list with all the existing packages in some version of LTS
 def get_all_time_packages(df_list):
@@ -14,7 +27,7 @@ def get_all_time_packages(df_list):
         lts_packages = set(df['package'])
         all_packages = all_packages.union(lts_packages)
 
-    return list(all_packages)
+    return all_packages
 
 # return a DataFrame of versions of each package by LTS 
 def get_versions_df(df_list):
@@ -400,7 +413,7 @@ def calculate_bottom(data, bar_idx):
     if bar_idx == 0:
         return 0
     
-    cumsum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    cumsum = [0 for lts in lts_list]
     for idx in range(0, bar_idx):
         cumsum = list(map(operator.add, cumsum, data[idx]))
     return cumsum
@@ -409,7 +422,7 @@ def calculate_bottom_dict(data, keylist, bar_idx):
     if bar_idx == 0:
         return 0
     
-    cumsum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    cumsum = [0 for lts in lts_list]
     for idx in range(0, bar_idx):
         cumsum = list(map(operator.add, cumsum, data[keylist[idx]]))
     return cumsum

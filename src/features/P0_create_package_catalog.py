@@ -9,7 +9,7 @@ def create_csv(data, date_now, logging, lts):
     logging.info("Writing results to file")
     try:
         csv_path = os.path.join(os.path.dirname(__file__),
-                                "../../data/test/%s/packages-catalog-{date}.csv".format(
+                                "../../data/%s/packages-catalog-{date}.csv".format(
             date=date_now) % lts)
         csv_file_name = csv_path
         with open(csv_file_name, "w") as csv_file:

@@ -10,8 +10,9 @@ from features.P3_construct_dataframe_with_imports import construct_df_with_impor
 from features.P4_construct_dataframe_with_mtl_usage import generate_monad_usage_dataframe
 #from features.P5_fix_paths import fix_paths
 from features.P6_get_method_calls import get_methods_calls
-lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22',
-            '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11']
+lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11',
+            '13-19', '14-27', '15-3', '16-11', '16-31', '17-2', '18-6', '18-8', '18-18']
+
 for lts_version in lts_list:
     PATH = "C:/Users/nicol/Desktop/lts/lts-%s" % lts_version  # directory of packages
     lts = PATH.split('/')[-1]
@@ -20,7 +21,7 @@ for lts_version in lts_list:
     logging = setup_log_level(args)
 
     directory_path = os.path.join(os.path.dirname(__file__),
-                                  "../data/test/%s" % lts)
+                                  "../data/%s" % lts)
     try:
         os.mkdir(directory_path)
     except OSError as e:
