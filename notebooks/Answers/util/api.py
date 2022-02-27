@@ -179,6 +179,7 @@ def get_update_count_df(df_list, versions_df):
 
 
 def get_count_updated_packages_by_lts(df_list, df):
+    count_total_pkg = create_lts_obj()
     count_updated_packages_by_lts = create_lts_obj()
     for idx, lts in enumerate(lts_list):
         count_updated_packages_by_lts[lts] = 0
@@ -197,10 +198,13 @@ def get_count_updated_packages_by_lts(df_list, df):
         if idx == 0:
             count_updated_packages_by_lts[lts] = 0
         else:
+            count_total_pkg[lts] = count_updated_packages_by_lts[lts]
             count_updated_packages_by_lts[lts] = count_updated_packages_by_lts[lts] * 100 / len(df_list[idx - 1])
     
     del count_updated_packages_by_lts['0-7']
-    return count_updated_packages_by_lts
+    del count_total_pkg['0-7']
+    list_count = [count_total_pkg,count_updated_packages_by_lts]
+    return list_count
 
 
 def build_mtl_continuity_matrix(df_list, pkgs):
