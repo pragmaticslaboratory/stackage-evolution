@@ -1,6 +1,0 @@
-*.hi
-*.o
-PackageImports
-PackageInfoJSON
-ParseCabal
-*.exe

@@ -19,8 +19,7 @@ import pandas as pd
 
 
 def depends_of_mtl(data):
-    dependencies = data[5].split(',')
-    return 1 if 'mtl' in dependencies else 0
+    return 1 if 'mtl' in data[5] else 0
 
 
 def build_metadata(data):
@@ -60,7 +59,7 @@ def process_catalog_csv(csvFilename, logger, lts):
     df.sort_index(inplace=True)
 
     df_path = os.path.join(os.path.dirname(__file__),
-                           "../../data/test/%s/%s.df" % (
+                           "../../data/%s/%s.df" % (
         lts, lts))
     df.to_pickle(df_path)
     logger.debug(df[['package', 'main-modules']])

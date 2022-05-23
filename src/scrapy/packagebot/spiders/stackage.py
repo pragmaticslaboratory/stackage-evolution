@@ -5,7 +5,7 @@ import re
 class PackagesSpider(scrapy.Spider):
     name = "stackage"
     start_urls = [
-        "https://www.stackage.org/lts-16.11",
+        "https://www.stackage.org/lts-0.7",
     ]
 
     files = []
@@ -14,7 +14,7 @@ class PackagesSpider(scrapy.Spider):
         links = [
             y
             for y in [
-                x.xpath("@href").re_first(r"(lts-16.11/package/.*)")
+                x.xpath("@href").re_first(r"(lts-0.7/package/.*)")
                 for x in response.css("a.package-name")
             ]
             if y is not None
@@ -30,8 +30,10 @@ class PackagesSpider(scrapy.Spider):
                 yield scrapy.Request(next_page, callback=self.parse_package)
 
     def parse_package(self, response):
-        package_name = re.search(r".*lts-16.11/package/(.*)$", response.url).group(1)
-        links_versiones = ["https://hackage.haskell.org/package/%s" % package_name]
+        package_name = re.search(
+            r".*lts-0.7/package/(.*)$", response.url).group(1)
+        links_versiones = [
+            "https://hackage.haskell.org/package/%s" % package_name]
 
         for next_page in links_versiones:
             print(">>>> NEXT Page: %s" % next_page)
@@ -42,9 +44,8 @@ class PackagesSpider(scrapy.Spider):
     def parse_package_version(self, response):
         package_name = re.search(r".*/package/(.*)-.*$", response.url).group(1)
         version_actual = response.xpath(
-            "//th[text()='Versions']/parent::*/td/strong/text()"
-        ).extract_first()
-
+            "//th[text()='Versions ']/parent::*/td/strong/text()"
+        ).get()
         package_download_url = "%s/%s-%s.tar.gz" % (
             response.url,
             package_name,
@@ -70,7 +71,8 @@ class PackagesSpider(scrapy.Spider):
         Uploaded_by = response.xpath(
             "//th[text()='Uploaded']/parent::*/td/a/text()"
         ).extract()
-        Fecha = response.xpath("//th[text()='Uploaded']/parent::*/td/text()").extract()
+        Fecha = response.xpath(
+            "//th[text()='Uploaded']/parent::*/td/text()").extract()
         Uploaded_fecha = Fecha[0][0:28]
 
         yield {

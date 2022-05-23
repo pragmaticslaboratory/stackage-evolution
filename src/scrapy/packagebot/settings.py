@@ -70,8 +70,6 @@ ITEM_PIPELINES = {
     "packagebot.pipelines.PackageUnzipDeletePipeline": 500,
 }
 
-FILES_STORE = "/Users/fruiz/Desktop/github/papers-stackage/pipelines/scripts/StackageDownload/lts-16.11"
-
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 AUTOTHROTTLE_ENABLED = True
