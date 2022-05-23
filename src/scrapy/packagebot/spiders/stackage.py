@@ -5,7 +5,7 @@ import re
 class PackagesSpider(scrapy.Spider):
     name = "stackage"
     start_urls = [
-        "https://www.stackage.org/lts-18.18",
+        "https://www.stackage.org/lts-0.7",
     ]
 
     files = []
@@ -14,7 +14,7 @@ class PackagesSpider(scrapy.Spider):
         links = [
             y
             for y in [
-                x.xpath("@href").re_first(r"(lts-18.18/package/.*)")
+                x.xpath("@href").re_first(r"(lts-0.7/package/.*)")
                 for x in response.css("a.package-name")
             ]
             if y is not None
@@ -31,7 +31,7 @@ class PackagesSpider(scrapy.Spider):
 
     def parse_package(self, response):
         package_name = re.search(
-            r".*lts-18.18/package/(.*)$", response.url).group(1)
+            r".*lts-0.7/package/(.*)$", response.url).group(1)
         links_versiones = [
             "https://hackage.haskell.org/package/%s" % package_name]
 

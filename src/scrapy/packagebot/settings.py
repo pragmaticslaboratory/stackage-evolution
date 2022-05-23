@@ -70,8 +70,6 @@ ITEM_PIPELINES = {
     "packagebot.pipelines.PackageUnzipDeletePipeline": 500,
 }
 
-FILES_STORE = "C:/Users/nicol/Desktop/lts/lts-18-18"
-
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
 AUTOTHROTTLE_ENABLED = True

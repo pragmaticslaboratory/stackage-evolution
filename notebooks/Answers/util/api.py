@@ -207,7 +207,7 @@ def get_count_updated_packages_by_lts(df_list, df):
     return list_count
 
 
-def build_mtl_continuity_matrix(df_list, pkgs):
+def build_continuity_matrix(df_list, pkgs, monad_direct):
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
     for i, row in df.iterrows():
@@ -217,8 +217,8 @@ def build_mtl_continuity_matrix(df_list, pkgs):
 
             if(not package.empty):
                 state = 1
-                [use_mtl] = package['mtl-direct'].values
-                if(use_mtl == 1):
+                [use_monad] = package[monad_direct].values
+                if(use_monad == 1):
                     state = 2
             
             df.at[row.name, lts] = float(state)
@@ -229,7 +229,7 @@ def build_mtl_continuity_matrix(df_list, pkgs):
     return df
 
 
-def get_added_packages_mtl_by_lts(continuity_df):
+def get_added_packages_monad_by_lts(continuity_df):
     count = list(np.zeros(len(lts_list)))
 
     for i, row in continuity_df.iterrows():
@@ -243,7 +243,7 @@ def get_added_packages_mtl_by_lts(continuity_df):
     return count
 
 
-def get_removed_packages_mtl_by_lts(continuity_df):
+def get_removed_packages_monad_by_lts(continuity_df):
     count = list(np.zeros(len(lts_list)))
     
     for i, row in continuity_df.iterrows():
@@ -306,7 +306,48 @@ mtl_modules = [
     "Control.Monad.Writer.Strict"
 ]
 
+transfromers_modules = [
+    "Control.Monad.Trans.Accum",
+    "Control.Monad.Trans.Class",
+    "Control.Monad.Trans.Cont",
+    "Control.Monad.Trans.Except",
+    "Control.Monad.Trans.Identity",
+    "Control.Monad.Trans.Maybe",
+    "Control.Monad.Trans.RWS",
+    "Control.Monad.Trans.RWS.CPS",
+    "Control.Monad.Trans.RWS.Lazy",
+    "Control.Monad.Trans.RWS.Strict",
+    "Control.Monad.Trans.Reader",
+    "Control.Monad.Trans.Select",
+    "Control.Monad.Trans.State",
+    "Control.Monad.Trans.State.Lazy",
+    "Control.Monad.Trans.State.Strict",
+    "Control.Monad.Trans.Writer",
+    "Control.Monad.Trans.Writer.CPS",
+    "Control.Monad.Trans.Writer.Lazy",
+    "Control.Monad.Trans.Writer.Strict"
+]
+
+other_modules = [
+    "Control.Monad.Logger",
+    "Control.Monad.Logger.CallStack",
+    "Control.Monad.Free",
+    "Control.Monad.Free.Ap",
+    "Control.Monad.Free.Church",
+    "Control.Monad.Free.Class",
+    "Control.Monad.Free.TH"
+]
+
 mtl_monads = ['Continuation', 'Error', 'Except', 'Identity', 'List', 'RWS', 'Reader', 'State', 'Trans', 'Writer']
+transformer_monads = ['State','Reader', 'Writer', 'Except', 'Identity', 'RWS', 'Class', 'Cont', 'Maybe',"Accum","Select"]
+
+def make_columns_monad(df,monad):
+    if monad == "transformer":
+        df.loc[df.index, 'transformer-direct'] = df[transfromers_modules].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    elif monad == "other_modules":
+        df.loc[df.index, 'other-direct'] = df[other_modules].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    
+    return df
 
 def usage_combination_to_string(usage_vector):
     letters = ('C', 'E', 'I', 'L', 'R', 'S', 'T', 'W', 'X', 'Z')    
@@ -314,6 +355,43 @@ def usage_combination_to_string(usage_vector):
     if combination == "":
         combination = "None"
     return combination
+
+def compute_other_monad_usage_by_df(df):
+    module_logger = other_modules[0:1]
+    module_free = other_modules[2:6]
+    
+    df.loc[df.index, 'Logger'] = df[module_logger].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Free'] = df[module_free].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    
+    return df
+
+def compute_monad_transformer_usage_by_df(df):
+    tran_accum = transfromers_modules[0]
+    tran_class = transfromers_modules[1]
+    tran_cont = transfromers_modules[2]
+    tran_except= transfromers_modules[3]
+    tran_identity = transfromers_modules[4]
+    tran_maybe = transfromers_modules[5]
+    tran_rws = transfromers_modules[6:9]
+    tran_reader = transfromers_modules[10]
+    tran_select = transfromers_modules[11]
+    tran_state = transfromers_modules[12:14]
+    tran_writer = transfromers_modules[15:]    
+    
+    df.loc[df.index, 'Accum'] = df[tran_accum].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Class'] = df[tran_class].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Cont'] = df[tran_cont].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Except'] = df[tran_except].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Identity'] = df[tran_identity].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Maybe'] = df[tran_maybe].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'RWS'] = df[tran_rws].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Reader'] = df[tran_reader].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Select'] = df[tran_select].apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'State'] = df[tran_state].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Writer'] = df[tran_writer].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'MonadUsedTransformer'] = df[transformer_monads].sum(axis=1)
+    
+    return df
 
 def compute_monad_usage_by_df(df):
     mtl_cont = mtl_modules[0:2]

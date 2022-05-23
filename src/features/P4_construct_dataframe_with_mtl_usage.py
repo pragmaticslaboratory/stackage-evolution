@@ -88,6 +88,12 @@ def generate_monad_usage_dataframe(df_file, logging, lts):
                 else:
                     pkgMonadUsage[mtl_mod] = 0
 
+            for transformer_mod in transfromers_modules:
+                if transformer_mod in imods:
+                    pkgMonadUsage[transformer_mod] = 1
+                else:
+                    pkgMonadUsage[transformer_mod] = 0
+
             for other_mod in other_modules:
                 if other_mod in imods:
                     pkgMonadUsage[other_mod] = 1
@@ -111,6 +117,14 @@ def generate_monad_usage_dataframe(df_file, logging, lts):
                 packagesMonadUsage[idx][mtl_mod])
         df[mtl_mod] = pd.Series(
             moduleMonadUsageSeries[mtl_mod], index=df.index)
+    ### For transformers modules ##########################################################
+    for transformer_mod in transfromers_modules:
+        moduleMonadUsageSeries[transformer_mod] = []
+        for idx in listToProcess:
+            moduleMonadUsageSeries[transformer_mod].append(
+                packagesMonadUsage[idx][transformer_mod])
+        df[transformer_mod] = pd.Series(
+            moduleMonadUsageSeries[transformer_mod], index=df.index)
     ### For other non-MTL modules ##########################################################
     for other_mod in other_modules:
         moduleMonadUsageSeries[other_mod] = []
@@ -164,5 +178,34 @@ mtl_modules = [
     "Control.Monad.Trans",
     "Control.Monad.Trans.Class",
 ]
-
-other_modules = ["Control.Monad", "System.IO"]
+transfromers_modules = [
+    "Control.Monad.Trans.Accum",
+    "Control.Monad.Trans.Class",
+    "Control.Monad.Trans.Cont",
+    "Control.Monad.Trans.Except",
+    "Control.Monad.Trans.Identity",
+    "Control.Monad.Trans.Maybe",
+    "Control.Monad.Trans.RWS",
+    "Control.Monad.Trans.RWS.CPS",
+    "Control.Monad.Trans.RWS.Lazy",
+    "Control.Monad.Trans.RWS.Strict",
+    "Control.Monad.Trans.Reader",
+    "Control.Monad.Trans.Select",
+    "Control.Monad.Trans.State",
+    "Control.Monad.Trans.State.Lazy",
+    "Control.Monad.Trans.State.Strict",
+    "Control.Monad.Trans.Writer",
+    "Control.Monad.Trans.Writer.CPS",
+    "Control.Monad.Trans.Writer.Lazy",
+    "Control.Monad.Trans.Writer.Strict"
+]
+other_modules = [
+    "Control.Monad", 
+    "System.IO","Control.Monad.Logger",
+    "Control.Monad.Logger.CallStack",
+    "Control.Monad.Free",
+    "Control.Monad.Free.Ap",
+    "Control.Monad.Free.Church",
+    "Control.Monad.Free.Class",
+    "Control.Monad.Free.TH"
+]

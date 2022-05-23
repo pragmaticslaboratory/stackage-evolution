@@ -27,13 +27,13 @@ for lts_version in lts_list:
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-
+    df_with_imports = "C:/Users/nicol/Documents/GitHub/data/lts-%s/lts-%s-with-paths-with-imports.df" % (lts_version,lts_version)
     date_now = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
-    csv_file = create_package_catalog(PATH, date_now, logging, lts)
+    """csv_file = create_package_catalog(PATH, date_now, logging, lts)
     initial_df = process_catalog_csv(os.path.join(
         os.path.dirname(__file__), csv_file), logging, lts)
     df_with_paths = construct_df_with_paths(PATH, initial_df, logging)
-    df_with_imports = construct_df_with_imports(df_with_paths, logging)
+    df_with_imports = construct_df_with_imports(df_with_paths, logging)"""
     df_with_monads_categories = generate_monad_usage_dataframe(
         df_with_imports, logging, lts)
     # df_fix_paths = fix_paths(PATH, df_with_imports, logging, lts) use in case of change paths
