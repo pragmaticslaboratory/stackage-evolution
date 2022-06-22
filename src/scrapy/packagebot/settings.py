@@ -21,6 +21,7 @@ SPIDER_MODULES = ["packagebot.spiders"]
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
+FILES_STORE = 'C:/Users/nicol/Desktop/lts/19-11'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
 
@@ -66,8 +67,8 @@ ROBOTSTXT_OBEY = True
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "packagebot.pipelines.PackagePipeline": 1,
-    "packagebot.pipelines.PackageDownloadPipeline": 300,
-    "packagebot.pipelines.PackageUnzipDeletePipeline": 500,
+    "packagebot.pipelines.PackageDownloadPipeline": 500,
+    "packagebot.pipelines.PackageUnzipDeletePipeline": 1000,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
