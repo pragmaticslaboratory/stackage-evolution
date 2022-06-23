@@ -42,12 +42,36 @@ def clean_utf8(path_file):
     file = io.open(path_file, 'w', encoding="utf-8")
     file.write(text)
     file.close()
+def create_package_catalog_revision(path, date_now, logging, lts):
+    pkg_dirs = os.listdir(path)
+    logging.info("Starting work at {cabal_file}".format(
+    cabal_file=pkg_dirs))
 
+    package_catalog = list()
+    for pkg in pkg_dirs:
+        cabal_file = os.path.join(path + '/' + pkg)
+        logging.info("Starting work at {cabal_file}".format(
+            cabal_file=cabal_file))
+        clean_utf8(cabal_file)
+        completed_process = subprocess.run(
+            os.path.join(os.path.dirname(__file__),
+                         '../parse/ParseCabal.exe'),
+            input=cabal_file,
+            capture_output=True,
+            text=True,
+            shell=True,
+        )
+
+        if completed_process.returncode == 0:
+            package_catalog.append(completed_process.stdout)
+
+    return create_csv(package_catalog, date_now, logging, lts)
 
 def create_package_catalog(path, date_now, logging, lts):
     _tmp_pkg_tuple_dirs = []
     logging.info("Processing package index with root {path}".format(path=path))
     for _, pkg_tuple, _ in walklevel(path, level=0):
+        logging.info("package tuple",pkg_tuple)
         _tmp_pkg_tuple_dirs.extend(pkg_tuple)
         _tmp_pkg_tuple_dirs = map(lambda x: (
             x, os.path.join(path, x)), _tmp_pkg_tuple_dirs)

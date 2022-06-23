@@ -7,11 +7,10 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from stackage import PackagesSpider
+from scrapy.packagebot.spiders import PackagesSpider
 from twisted.internet.task import deferLater
 from time import sleep
 from scrapy import signals
-from scrapy.xlib.pydispatch import dispatcher
 
 
 lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11',
