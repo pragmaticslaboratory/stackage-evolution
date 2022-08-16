@@ -1,0 +1,11 @@
+consumeMsgs' :: MonadBaseControl IO m
+             => A.Channel
+             -> Text -- ^ Specifies the name of the queue to consume from.
+             -> A.Ack
+             -> ((A.Message, A.Envelope) -> m ())
+             -> (ConsumerTag -> m ())
+             -> FieldTable
+             -> m A.ConsumerTag
+consumeMsgs' chan queueName ack callback cancelled args =
+    liftBaseWith $ \runInIO ->
+        A.consumeMsgs' chan queueName ack (void . runInIO . callback) (void . runInIO . cancelled) args

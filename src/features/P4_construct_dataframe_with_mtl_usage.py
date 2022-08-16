@@ -201,8 +201,8 @@ transfromers_modules = [
 ]
 other_modules = [
     "Control.Monad", 
-    "System.IO","Control.Monad.Logger",
-    "Control.Monad.Logger.CallStack",
+    "System.IO",
+    "Control.Monad.Trans.Control",
     "Control.Monad.Free",
     "Control.Monad.Free.Ap",
     "Control.Monad.Free.Church",
