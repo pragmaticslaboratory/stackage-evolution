@@ -1,4 +1,4 @@
-# EStackage Repository: An Exploratory Study of its Evolution
+# Stackage Repository: An Exploratory Study of its Evolution
 
 **Context**. Package repositories for a programming language are increasingly common. A repository can keep a register of the evolution of its packages. In the programming language Haskell, with its defining characteristic monads, we can find the Stackage repository, which is a curated repository for stable Haskell packages in the Hackage repository. Despite the widespread use of Stackage in its industrial target, we are not aware of much empirical research about how this repository has evolved, including the use of monads. 
 
