@@ -6,7 +6,7 @@ import re
 from packaging import version
 import glob
 
-url = '../../data'
+url = '../../data/Dfs'
 list_url = glob.glob(f"{url}/*")
 lts_list = [lts.split('lts-')[1].replace('-','.') for lts in list_url]
 lts_list = sorted(lts_list, key=lambda x: float(x))
