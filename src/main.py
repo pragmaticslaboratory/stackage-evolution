@@ -32,11 +32,11 @@ logging = setup_log_level(args)
 for lts_version in lts_list:
     #Set the path where are located the downloaded package, and the directory path where the DataFrames will be save
     if(not isRevisedVersion):
-        PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/Tar_Package/lts-%s"% lts_version)
-        directory_path = os.path.join(os.path.dirname(__file__),"../data/Dfs/lts-%s"% lts_version)
+        PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/tar_package/lts-%s"% lts_version)
+        directory_path = os.path.join(os.path.dirname(__file__),"../data/dfs/lts-%s"% lts_version)
     else:
-        PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/Revised_Cabal/lts-%s"% lts_version)   
-        directory_path = os.path.join(os.path.dirname(__file__),"../data/Dfs_Revissed/lts-%s"% lts_version)
+        PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal/lts-%s"% lts_version)   
+        directory_path = os.path.join(os.path.dirname(__file__),"../data/dfs_revissed/lts-%s"% lts_version)
     #Change the path to work with the wsl directions
     if(isWsl):
         PATH = wsl + PATH[3:]
