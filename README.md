@@ -37,7 +37,8 @@ Carpetas:
 
 3.- La carpeta 'lts_downloaded' posee todos los paquetes descargados por LTS, en esta carpeta es de donde se extrae la data para generar nuestros Data Frames.
 
-4.- La carpeta 'notebook' posee un archivo importante llamado import_monad_excel que posee un programa que extrae paquetes de Stackage que en su descripción habla sobre mónadas y genera un Excel con todos estos paquetes, su descripción, y la cantidad de veces que fue importado por otros paquetes a lo largo de las LTS. 
+4.- La carpeta 'notebook' posee dos subcarpetas, una de ellas es misc, que contiene scripts de los inicios de este proyecto, que actualmente no tienen relacion a los hallazgos encontrados por nuestras Research Question.
+
 Dentro de 'notebook' hay una subcarpeta llamada 'Answers', en esta carpeta se encuentran todos los notebooks de las RQ, cada notebook tiene en su nombre la RQ que va a responder. Ademas, en el contenido de ellos se encuentra información de la pregunta que buscan responder. Finalmente dentro de 'Answers' se encuentra la carpeta llamada 'util', dentro de ella se encuentra un unico archivo llamado api. 
 La api es donde se encuentran la mayoria de metodos que son utilizados por los notebooks de las RQ. 
 
@@ -68,7 +69,7 @@ hay algunos argumentos que se les pueden pasar al comando:
 
 Example:
     python main.py -q --revised
-    
+
 *----------------------------------------------------------------*
 
 5.2.- En la carpeta parse es donde se encuentran los programas hechos en Haskell que se encargan de parsear la información de los paquetes que recibe, y asi poder transformarla en data utilizable para los analisis. Estos parse son llamados por las mismas pipes cuando estan siendo ejecutadas.
