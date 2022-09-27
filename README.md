@@ -65,8 +65,10 @@ hay algunos argumentos que se les pueden pasar al comando:
 * -q para no ver los logs y unicamente errores
 * --wsl este comando es por si te encuentras en windows y deseas ejecutarlo en el entorno de wsl (*Opcional)
 * --revised este comando es por si deseas generar los Data Frames a partir de las versiones revisadas de los Cabal (Si no se especifica genera los Data Frames con la información presente en los paquetes con extension .tar)
+
 Example:
     python main.py -q --revised
+    
 *----------------------------------------------------------------*
 
 5.2.- En la carpeta parse es donde se encuentran los programas hechos en Haskell que se encargan de parsear la información de los paquetes que recibe, y asi poder transformarla en data utilizable para los analisis. Estos parse son llamados por las mismas pipes cuando estan siendo ejecutadas.
@@ -75,4 +77,4 @@ Los parse para que sean funcionales y puedan ser ejecutados por las pipes es nec
 
 5.3.- La carpeta scrapy es donde se encuentra el proyecto de scrapy, el cual mediante spiders se encarga de extraer los nombres de los paquetes por lts en la web de Stackage, para luego buscar en Hackage y descargar el archivo comprimido de extensión .tar donde se encuentra la información completa del paquete, o la version revisada que solo posee el archivo .cabal del paquete. Las descargas se van almacenando directamente en la carpeta de lts_downloaded
 
-5.4.- La carpeta util tiene programas utilizados por el main.py y las pipes, para poder indicar si la ejecución del main.py es verbose o quiet.
+5.4.- La carpeta util tiene programas utilizados por el main.py, en concreto son los argumentos que se les puede pasar al comando de ejecucion del main.
