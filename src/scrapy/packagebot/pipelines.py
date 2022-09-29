@@ -20,6 +20,7 @@ class PackageDownloadPipeline(FilesPipeline):
 
     def get_media_requests(self, item, info):     
         for file_url in item['file_urls']:
+            print("PROBANDO EL TIPO DE DATOS ACA",item["type"])
             if(item["type"] != "revision"):
                 packageName    = item['package']
                 packageVersion = item['version']
@@ -33,14 +34,18 @@ class PackageDownloadPipeline(FilesPipeline):
         return request.meta['filename']
 
     def item_completed(self, results, item, info):
-        file_paths = ["%s/%s" % (settings.FILES_STORE, x['path']) for ok, x in results if ok]
+        PATH = os.path.join(os.path.dirname(__file__),"..\\lts_downloaded\\tar-package")
+        PATH = PATH+"/lts-19-11"
+        print("-----------------------------PROBANDO POR AQUI-------------------------------------------",PATH)
+        file_paths = ["%s/%s" % (PATH, x['path']) for ok, x in results if ok]
+        print(file_paths)
         item['file_paths'] = file_paths        
         return item
 
 class PackageUnzipDeletePipeline(object):
     def process_item(self, item, spider):        
         for downloadedFile in item['file_paths']:
-            print("MIRA QUE LLEGO ACA",downloadedFile)
+            print("-----------------------------MIRA QUE LLEGO ACA-----------------------------",downloadedFile)
             try:            
                 print("Extracting %s" % downloadedFile)
                 tar = tarfile.open(downloadedFile, "r:gz")

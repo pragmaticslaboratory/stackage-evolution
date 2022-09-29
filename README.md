@@ -78,4 +78,10 @@ Los parse para que sean funcionales y puedan ser ejecutados por las pipes es nec
 
 5.3.- La carpeta scrapy es donde se encuentra el proyecto de scrapy, el cual mediante spiders se encarga de extraer los nombres de los paquetes por lts en la web de Stackage, para luego buscar en Hackage y descargar el archivo comprimido de extensión .tar donde se encuentra la información completa del paquete, o la version revisada que solo posee el archivo .cabal del paquete. Las descargas se van almacenando directamente en la carpeta de lts_downloaded
 
+*--------------------------------- Ejecución -------------------------------*
+posicionarse en src/scrapy/packagebot
+
+scrapy crawl stackage 
+
+*----------------------------------------------------------------*
 5.4.- La carpeta util tiene programas utilizados por el main.py, en concreto son los argumentos que se les puede pasar al comando de ejecucion del main.

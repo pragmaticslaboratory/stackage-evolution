@@ -21,7 +21,6 @@ SPIDER_MODULES = ["packagebot.spiders"]
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
-FILES_STORE = 'C:/Users/nicol/Desktop/lts/19-11'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
 

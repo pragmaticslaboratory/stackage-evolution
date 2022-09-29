@@ -2,7 +2,6 @@ import errno
 import os
 import glob
 from datetime import datetime
-from argparse import ArgumentParser
 from util.logging import setup_log_level
 from util.parser import setup_command_line
 from features.P0_create_package_catalog import create_package_catalog,create_package_catalog_revision

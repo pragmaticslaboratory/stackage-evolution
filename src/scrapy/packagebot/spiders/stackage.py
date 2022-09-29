@@ -1,16 +1,23 @@
 import scrapy
 import re
 import requests
+import os
 from bs4 import BeautifulSoup
-
 class PackagesSpider(scrapy.Spider):
     name = "stackage"
     start_urls = [
         "https://www.stackage.org/lts-19.11",
     ]
-
+    PATH = "C:/Users/nicol/Documents/GitHub/lts_downloaded/tar_package"
+    PATH = PATH+"/lts-19-11"
+    custom_settings = {
+        'FILES_STORE': PATH,
+    }
     files = []
 
+    args = parser.parse_args()
+    isRevisedVersion = args.revised
+    print("FUNCIONA LOS ARGS MEN ESTO ES GENIAL",isRevisedVersion)
     def parse(self, response):
         links = [
             y
@@ -46,7 +53,6 @@ class PackagesSpider(scrapy.Spider):
             )
 
     def parse_package_version(self, response):
-        print("PROBAANDO ACA PAPITO",response)
         if re.search("/revision",response.url):
             typeUrl = "revision"
             package_name = re.search(r".*/package/(.*)-.*$", response.url).group(1)
