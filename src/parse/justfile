@@ -1,6 +1,9 @@
 default:
     just --list --unsorted
 
+test:
+    pytest
+
 clean:
     rm -f *.hi
     rm -f *.o
