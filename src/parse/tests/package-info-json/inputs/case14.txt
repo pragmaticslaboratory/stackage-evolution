@@ -1,0 +1,7 @@
+execRWSP
+    :: (Monad m, Monoid w)
+    => r
+    -> s
+    -> Pipe i o u (RWST r w s m) a
+    -> Pipe i o u m (s, w)
+execRWSP r s = fmap (\(_,s',w) -> (s',w)) . runRWSP r s

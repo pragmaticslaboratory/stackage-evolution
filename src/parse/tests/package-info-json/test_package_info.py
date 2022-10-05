@@ -82,3 +82,45 @@ def test_case8():
     calls = run_parser(filename)
 
     assert "evalState" in calls
+
+def test_case9():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case9.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case10():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case10.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case11():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case11.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case12():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case12.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+    
+def test_case13():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case13.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case14():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case14.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case15():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case15.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls

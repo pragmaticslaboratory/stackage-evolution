@@ -11,8 +11,8 @@ list_url = glob.glob(f"{url}/*")
 lts_list = [lts.split('lts-')[1].replace('-','.') for lts in list_url]
 lts_list = sorted(lts_list, key=lambda x: float(x))
 lts_list = [lts.replace('.','-') for lts in lts_list]
-lts_list.remove('18-18')
-lts_list.insert(18,'18-18')
+lts_list.remove('18-28')
+lts_list.insert(18,'18-28')
 #lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11','16-31','17-2','18-6','18-8','18-18']
 
 ops = {'>=': operator.ge, '>': operator.gt, '<=': operator.le, '<': operator.lt, '==': operator.eq}
@@ -329,8 +329,7 @@ transfromers_modules = [
 ]
 
 other_modules = [
-    "Control.Monad.Logger",
-    "Control.Monad.Logger.CallStack",
+    "Control.Monad.Trans.Control",
     "Control.Monad.Free",
     "Control.Monad.Free.Ap",
     "Control.Monad.Free.Church",
@@ -357,10 +356,10 @@ def usage_combination_to_string(usage_vector):
     return combination
 
 def compute_other_monad_usage_by_df(df):
-    module_logger = other_modules[0:1]
-    module_free = other_modules[2:6]
+    module_control = other_modules[0]
+    module_free = other_modules[1:5]
     
-    df.loc[df.index, 'Logger'] = df[module_logger].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
+    df.loc[df.index, 'Control'] = df[module_control].apply(lambda x: 1 if x > 0 else 0)
     df.loc[df.index, 'Free'] = df[module_free].sum(axis=1).apply(lambda x: 1 if x > 0 else 0)
     
     return df
