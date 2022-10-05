@@ -1,0 +1,5 @@
+subHSetHReaderT :: (Monad m, Applicative m, SubHSettable els subels)
+                => HReaderT subels m a -> HReaderT els m a
+subHSetHReaderT hr = do
+  hset <- askHSet
+  lift $ runHReaderT (subHSet hset) hr
