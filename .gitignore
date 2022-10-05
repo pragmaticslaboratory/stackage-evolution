@@ -2,10 +2,16 @@
 .idea
 .DS_Store
 
+# Ignore compiled Haskell executables
+src/parse/PackageImports
+src/parse/PackageInfoJSON
+src/parse/ParseCabal
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 .pytest_cache
+*.pyc
 
 # C extensions
 *.so
