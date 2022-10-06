@@ -1,0 +1,4 @@
+toOpaqueGradient :: RenderablePixel px => Gradient px -> Gradient px
+toOpaqueGradient = fmap (\(o, p) -> (o, mixWithAlpha pxId pxOpaq p p)) where
+  pxId _ _ v = v
+  pxOpaq _ _ = fullValue

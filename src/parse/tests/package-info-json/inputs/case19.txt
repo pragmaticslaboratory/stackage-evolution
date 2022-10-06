@@ -1,0 +1,3 @@
+-- | Prepare to run request with config and additional header options.
+runSessReqWithParamsM :: (MonadIO m) => [Option 'Https] -> cfg -> SafeReqM cfg a -> m (Either SafeException a)
+runSessReqWithParamsM params cfg = runSafeReqM (Config defaultHttpConfig params cfg)

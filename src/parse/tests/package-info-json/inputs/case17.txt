@@ -1,0 +1,3 @@
+-- | Prepare to run requests with addional header options.
+runReqWithParamsM :: (MonadIO m) => [Option 'Https] -> SafeReqM () a -> m (Either SafeException a)
+runReqWithParamsM params = runSafeReqM (Config defaultHttpConfig params ())

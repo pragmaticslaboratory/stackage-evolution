@@ -1,0 +1,2 @@
+runInpParseString :: String -> InpParseString a -> Maybe (a, String)
+runInpParseString s (InpParseString m) = StateS.runStateT m s

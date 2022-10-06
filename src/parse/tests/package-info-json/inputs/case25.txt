@@ -1,0 +1,3 @@
+toAlphaGradient :: Pixel px => Gradient px -> Gradient (PixelBaseComponent px)
+toAlphaGradient = fmap extractOpacity where
+  extractOpacity (o, p) = (o, pixelOpacity p)

@@ -124,3 +124,75 @@ def test_case15():
     calls = run_parser(filename)    
 
     assert "evalState" in calls
+
+def test_case16():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case16.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case17():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case17.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case18():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case18.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case19():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case19.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case20():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case20.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case21():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case21.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case22():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case22.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case23():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case23.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case24():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case24.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case25():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case25.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case26():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case26.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls
+
+def test_case27():
+    filename = os.path.join(os.path.dirname(__file__), "inputs/case27.txt")
+    calls = run_parser(filename)    
+
+    assert "evalState" in calls

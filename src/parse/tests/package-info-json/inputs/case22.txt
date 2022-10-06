@@ -1,0 +1,4 @@
+transformOrderM :: Monad m => (Point -> m Point) -> DrawOrder px -> m (DrawOrder px)
+transformOrderM f order = do
+  v <- transformM f $ _orderPrimitives order 
+  return $ order { _orderPrimitives = v}

@@ -1,0 +1,2 @@
+runReqM :: (MonadIO m) => SafeReqM () a -> m (Either SafeException a)
+runReqM = runSafeReqM (Config defaultHttpConfig [] ())
