@@ -6,23 +6,19 @@ from bs4 import BeautifulSoup
 class PackagesSpider(scrapy.Spider):
     name = "stackage"
     start_urls = [
-        "https://www.stackage.org/lts-19.11",
+        "https://www.stackage.org/lts-2.22",
     ]
-    PATH = "C:/Users/nicol/Documents/GitHub/lts_downloaded/tar_package"
-    PATH = PATH+"/lts-19-11"
-    custom_settings = {
-        'FILES_STORE': PATH,
-    }
     files = []
-
-    args = parser.parse_args()
-    isRevisedVersion = args.revised
-    print("FUNCIONA LOS ARGS MEN ESTO ES GENIAL",isRevisedVersion)
-    def parse(self, response):
+    def parse_page2(self, response):
+        print("--------------------------------------------------------INICIO--------------------------------------------------------")
+        print(self.settings["LTS"])
+        print(self.settings["FILES_STORE"])
+        print("--------------------------------------------------------INICIO--------------------------------------------------------")
+        
         links = [
             y
             for y in [
-                x.xpath("@href").re_first(r"(lts-19.11/package/.*)")
+                x.xpath("@href").re_first(r"(lts-2.22/package/.*)")
                 for x in response.css("a.package-name")
             ]
             if y is not None
@@ -39,7 +35,7 @@ class PackagesSpider(scrapy.Spider):
 
     def parse_package(self, response):
         package_name = re.search(
-            r".*lts-19.11/package/(.*)$", response.url).group(1)
+            r".*lts-2.22/package/(.*)$", response.url).group(1)
         page = requests.get("https://hackage.haskell.org/package/%s/revisions/" % package_name)
         bodyPage = BeautifulSoup(page.content, 'html.parser')
 
@@ -75,4 +71,5 @@ class PackagesSpider(scrapy.Spider):
             "package-ver": "%s-%s" % (package_name, version_actual),
             "downloadUrl": package_download_url,
             "file_urls": [package_download_url],
+            "file_store": self.settings["FILES_STORE"]
         }

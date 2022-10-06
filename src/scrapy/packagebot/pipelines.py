@@ -34,10 +34,9 @@ class PackageDownloadPipeline(FilesPipeline):
         return request.meta['filename']
 
     def item_completed(self, results, item, info):
-        PATH = os.path.join(os.path.dirname(__file__),"..\\lts_downloaded\\tar-package")
-        PATH = PATH+"/lts-19-11"
+        path = item["file_store"]
         print("-----------------------------PROBANDO POR AQUI-------------------------------------------",PATH)
-        file_paths = ["%s/%s" % (PATH, x['path']) for ok, x in results if ok]
+        file_paths = ["%s/%s" % (path, x['path']) for ok, x in results if ok]
         print(file_paths)
         item['file_paths'] = file_paths        
         return item
