@@ -1,8 +1,13 @@
+set dotenv-load := false
+
 default:
     just --list --unsorted
 
 test:
     pytest
+
+runpi case:
+    printf "tests/package-info-json/inputs/test.cabal\ntests/package-info-json/inputs/{{case}}.txt" | ./PackageInfoJSON
 
 clean:
     rm -f *.hi
