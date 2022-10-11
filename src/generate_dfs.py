@@ -12,7 +12,7 @@ from features.P4_construct_dataframe_with_mtl_usage import generate_monad_usage_
 #from features.P5_fix_paths import fix_paths
 from features.P6_get_method_calls import get_methods_calls
 
-PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/Revised_Cabal")
+PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal")
 list_url = glob.glob(f"{PATH}/*")
 lts_list = [lts.split('lts-')[1].replace('-','.') for lts in list_url]
 lts_list = sorted(lts_list, key=lambda x: float(x))
@@ -51,8 +51,7 @@ for lts_version in lts_list:
         csv_file = create_package_catalog(PATH,directory_path, date_now, logging)
     else:
         csv_file = create_package_catalog_revision(PATH,directory_path, date_now, logging)
-    initial_df = process_catalog_csv(os.path.join(
-        os.path.dirname(__file__), csv_file), logging, directory_path,lts_version)
+    initial_df = process_catalog_csv(os.path.join(os.path.dirname(__file__), csv_file), logging, directory_path,lts_version)
     df_with_paths = construct_df_with_paths(PATH, initial_df, logging)
     df_with_imports = construct_df_with_imports(df_with_paths, logging)
     df_with_monads_categories = generate_monad_usage_dataframe(directory_path+"/lts-%s-with-paths-with-imports.df" % lts_version, logging, directory_path, lts_version)

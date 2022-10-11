@@ -20,13 +20,12 @@ class PackageDownloadPipeline(FilesPipeline):
 
     def get_media_requests(self, item, info):     
         for file_url in item['file_urls']:
-            print("PROBANDO EL TIPO DE DATOS ACA",item["type"])
             if(item["type"] != "revision"):
                 packageName    = item['package']
                 packageVersion = item['version']
                 filename = "%s/%s.tar.gz" % (packageName, packageVersion)
             else:
-                filename = "%s.cabal" & item['package']
+                filename = "%s.cabal" % item['package']
             yield scrapy.Request(file_url, meta={'filename': filename})            
         return
 
@@ -35,16 +34,13 @@ class PackageDownloadPipeline(FilesPipeline):
 
     def item_completed(self, results, item, info):
         path = item["file_store"]
-        print("-----------------------------PROBANDO POR AQUI-------------------------------------------",PATH)
         file_paths = ["%s/%s" % (path, x['path']) for ok, x in results if ok]
-        print(file_paths)
         item['file_paths'] = file_paths        
         return item
 
 class PackageUnzipDeletePipeline(object):
     def process_item(self, item, spider):        
         for downloadedFile in item['file_paths']:
-            print("-----------------------------MIRA QUE LLEGO ACA-----------------------------",downloadedFile)
             try:            
                 print("Extracting %s" % downloadedFile)
                 tar = tarfile.open(downloadedFile, "r:gz")

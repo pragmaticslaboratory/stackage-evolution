@@ -1,3 +1,4 @@
+from pickle import TRUE
 import scrapy
 import re
 import requests
@@ -5,26 +6,24 @@ import os
 from bs4 import BeautifulSoup
 class PackagesSpider(scrapy.Spider):
     name = "stackage"
-    start_urls = [
-        "https://www.stackage.org/lts-2.22",
-    ]
     files = []
-    def parse_page2(self, response):
-        print("--------------------------------------------------------INICIO--------------------------------------------------------")
-        print(self.settings["LTS"])
-        print(self.settings["FILES_STORE"])
-        print("--------------------------------------------------------INICIO--------------------------------------------------------")
-        
+    def start_requests(self):
+        url =  "https://www.stackage.org/lts-"
+        lts = getattr(self, 'LTS', None)
+        url = url + lts
+        yield scrapy.Request(url, self.parse)
+
+    def parse(self, response):
         links = [
             y
             for y in [
-                x.xpath("@href").re_first(r"(lts-2.22/package/.*)")
+                x.xpath("@href").get()
                 for x in response.css("a.package-name")
             ]
             if y is not None
         ]
-        sup = len(links)
-        # sup = 3
+        #sup = len(links)
+        sup = 3
         print("<<<<<<<<<< %s" % str(sup))
         for x in range(0, sup):
             next_page = links[x]
@@ -35,12 +34,14 @@ class PackagesSpider(scrapy.Spider):
 
     def parse_package(self, response):
         package_name = re.search(
-            r".*lts-2.22/package/(.*)$", response.url).group(1)
-        page = requests.get("https://hackage.haskell.org/package/%s/revisions/" % package_name)
-        bodyPage = BeautifulSoup(page.content, 'html.parser')
-
-        #links_versiones = ["https://hackage.haskell.org"+bodyPage.find('table').find('a', href=True)['href']]
-        links_versiones = ["https://hackage.haskell.org/package/%s" % package_name]
+            r".*/package/(.*)$", response.url).group(1)
+        isRevissedVersion = self.settings["REVISSED"]
+        if(isRevissedVersion == 'True'):
+            page = requests.get("https://hackage.haskell.org/package/%s/revisions/" % package_name)
+            bodyPage = BeautifulSoup(page.content, 'html.parser')
+            links_versiones = ["https://hackage.haskell.org"+bodyPage.find('table').find('a', href=True)['href']]
+        else:
+            links_versiones = ["https://hackage.haskell.org/package/%s" % package_name]
 
         for next_page in links_versiones:
             print(">>>> NEXT Page: %s" % next_page)
