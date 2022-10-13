@@ -1,6 +1,7 @@
 import errno
 import os
 import glob
+import pandas as pd
 from datetime import datetime
 from util.logging import setup_log_level
 from util.parser import setup_command_line
@@ -12,13 +13,8 @@ from features.P4_construct_dataframe_with_mtl_usage import generate_monad_usage_
 #from features.P5_fix_paths import fix_paths
 from features.P6_get_method_calls import get_methods_calls
 
-PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal")
-list_url = glob.glob(f"{PATH}/*")
-lts_list = [lts.split('lts-')[1].replace('-','.') for lts in list_url]
-lts_list = sorted(lts_list, key=lambda x: float(x))
-lts_list = [lts.replace('.','-') for lts in lts_list]
-lts_list.remove('18-28')
-lts_list.insert(18,'18-28')
+data = pd.read_csv("lts_list.csv")
+lts_list = data.columns
 
 wsl = "/mnt/c/"
 #Set the arguments values
