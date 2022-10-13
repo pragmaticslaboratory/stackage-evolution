@@ -13,7 +13,7 @@ from features.P4_construct_dataframe_with_mtl_usage import generate_monad_usage_
 #from features.P5_fix_paths import fix_paths
 from features.P6_get_method_calls import get_methods_calls
 
-data = pd.read_csv("lts_list.csv")
+data = pd.read_csv("util/lts_list.csv")
 lts_list = data.columns
 
 wsl = "/mnt/c/"
