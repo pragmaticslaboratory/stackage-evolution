@@ -1,3 +1,3 @@
--- | Prepare to run request with config.
-runSessReqM :: (MonadIO m) => cfg -> SafeReqM cfg a -> m (Either SafeException a)
-runSessReqM cfg = runSafeReqM (Config defaultHttpConfig [] cfg)
+
+dryInstantiate :: RefCreateEnv blk a -> IO a
+dryInstantiate bind = evalStateT (runRefCreateEnv bind) (__IMPOSSIBLE__, 0)

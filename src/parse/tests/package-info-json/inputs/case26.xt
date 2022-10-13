@@ -1,6 +1,0 @@
-lens :: (s -> a)
-     -> (s -> b -> t)
-     -> Lens s t a b
-{-# INLINE lens #-}
-lens accessor setter = \f src ->
-  fmap (setter src) $ f (accessor src)

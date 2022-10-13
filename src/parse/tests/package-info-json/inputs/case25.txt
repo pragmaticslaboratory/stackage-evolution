@@ -1,3 +1,2 @@
-toAlphaGradient :: Pixel px => Gradient px -> Gradient (PixelBaseComponent px)
-toAlphaGradient = fmap extractOpacity where
-  extractOpacity (o, p) = (o, pixelOpacity p)
+instance (MonadCont m) => MonadCont (RandT g m) where
+  callCC = liftCallCC' callCC

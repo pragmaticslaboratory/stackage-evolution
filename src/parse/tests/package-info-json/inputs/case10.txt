@@ -1,3 +1,5 @@
-throw :: forall tag e m a. HasThrow tag e m => e -> m a
-throw = throw_ (proxy# @tag)
-{-# INLINE throw #-}
+casetreeTop :: EvaluationStrategy -> CC.CompiledClauses -> TCM C.TTerm
+casetreeTop eval cc = flip runReaderT (initCCEnv eval) $ do
+  let a = commonArity cc
+  lift $ reportSLn "treeless.convert.arity" 40 $ "-- common arity: " ++ show a
+  lambdasUpTo a $ casetree cc

@@ -134,168 +134,130 @@ def test_case9():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case9.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "MaybeT" in calls
 
 
 def test_case10():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case10.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "runReaderT" in calls
 
 
 def test_case11():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case11.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "throwError" in calls
 
 
 def test_case12():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case12.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "liftM" in calls
 
 
 def test_case13():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case13.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "rwsP" in calls
 
 
 def test_case14():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case14.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "execRWSP and fmap" in calls
 
 
 def test_case15():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case15.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "withReaderT" in calls
 
 
 def test_case16():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case16.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "modify" in calls
 
 
 def test_case17():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case17.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "runStateT" in calls
 
 
 def test_case18():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case18.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "evalStateT" in calls
 
 
 def test_case19():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case19.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "lift" in calls
 
 
 def test_case20():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case20.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "StateT" in calls
 
 
 def test_case21():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case21.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "evalStateT" in calls
 
 
 def test_case22():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case22.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "runWriterT" in calls
 
 
 def test_case23():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case23.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "mapExceptT" in calls
 
 
 def test_case24():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case24.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "mapAccumL" in calls
 
 
 def test_case25():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case25.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "liftCallCC" in calls
 
 
 def test_case26():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case26.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "liftF" in calls
 
 
 def test_case27():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case27.txt")
     calls = run_parser(filename)
 
-    # evalState is not in the source code!
-    # TODO: what is the proper test case here?
-    assert "evalState" in calls
+    assert "unfoldr" in calls
