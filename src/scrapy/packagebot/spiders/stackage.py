@@ -22,8 +22,8 @@ class PackagesSpider(scrapy.Spider):
             ]
             if y is not None
         ]
-        #sup = len(links)
-        sup = 3
+        sup = len(links)
+        #sup = 3
         print("<<<<<<<<<< %s" % str(sup))
         for x in range(0, sup):
             next_page = links[x]

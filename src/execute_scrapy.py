@@ -10,10 +10,11 @@ parser.add_argument(
 args = parser.parse_args()
 isRevisedVersion = '--revised' if args.revised else '' 
 
+#Address of the location of the script that executes scrapy
 path = os.path.join(os.path.dirname(__file__),"..//src//scrapy//scrapy_lts.py")
-print(path)
+#Internally change the current location to that of the scrapy project
 os.chdir(os.getcwd()+'\\scrapy')
-print(os.getcwd())
+
 if(isRevisedVersion != ''):
     call(["python",path,isRevisedVersion])
 else:
