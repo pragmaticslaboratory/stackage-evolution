@@ -10,6 +10,7 @@ parser.add_argument(
     
 args = parser.parse_args()
 isRevisedVersion = args.revised
+print(isRevisedVersion)
 #lts_list = ['0-7']
 
 data = pd.read_csv("../util/lts_list.csv")
