@@ -13,7 +13,7 @@ from features.P4_construct_dataframe_with_mtl_usage import generate_monad_usage_
 #from features.P5_fix_paths import fix_paths
 from features.P6_get_method_calls import get_methods_calls
 
-data = pd.read_csv("util/lts_list.csv")
+data = pd.read_csv("lts_list.csv")
 lts_list = data.columns
 
 wsl = "/mnt/c/"
@@ -27,14 +27,14 @@ logging = setup_log_level(args)
 for lts_version in lts_list:
     #Set the path where are located the downloaded package, and the directory path where the DataFrames will be save
     if(not isRevisedVersion):
-        PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/tar_package/lts-%s"% lts_version)
+        path = os.path.join(os.path.dirname(__file__),"../lts_downloaded/tar_package/lts-%s"% lts_version)
         directory_path = os.path.join(os.path.dirname(__file__),"../data/dfs/lts-%s"% lts_version)
     else:
-        PATH = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal/lts-%s"% lts_version)   
+        path = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal/lts-%s"% lts_version)   
         directory_path = os.path.join(os.path.dirname(__file__),"../data/dfs_revissed/lts-%s"% lts_version)
     #Change the path to work with the wsl directions
     if(isWsl):
-        PATH = wsl + PATH[3:]
+        path = wsl + path[3:]
         directory_path = wsl + directory_path[3:]
 
     try:
@@ -43,12 +43,13 @@ for lts_version in lts_list:
         if e.errno != errno.EEXIST:
             raise
     date_now = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+    print("*-------------------------Starting with %s-------------------------*" % lts_version)
     if(not isRevisedVersion):
-        csv_file = create_package_catalog(PATH,directory_path, date_now, logging)
+        csv_file = create_package_catalog(path,directory_path, date_now, logging)
     else:
-        csv_file = create_package_catalog_revision(PATH,directory_path, date_now, logging)
+        csv_file = create_package_catalog_revision(path,directory_path, date_now, logging)
     initial_df = process_catalog_csv(os.path.join(os.path.dirname(__file__), csv_file), logging, directory_path,lts_version)
-    df_with_paths = construct_df_with_paths(PATH, initial_df, logging)
+    df_with_paths = construct_df_with_paths(path, initial_df, logging)
     df_with_imports = construct_df_with_imports(df_with_paths, logging)
     df_with_monads_categories = generate_monad_usage_dataframe(directory_path+"/lts-%s-with-paths-with-imports.df" % lts_version, logging, directory_path, lts_version)
     # df_fix_paths = fix_paths(PATH, df_with_imports, logging, lts) use in case of change paths

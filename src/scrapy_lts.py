@@ -13,13 +13,14 @@ isRevisedVersion = args.revised
 print(isRevisedVersion)
 #lts_list = ['0-7']
 
-data = pd.read_csv("../util/lts_list.csv")
+data = pd.read_csv("lts_list.csv")
+os.chdir(os.getcwd()+'\\scrapy')
 lts_list = data.columns
 for lts in lts_list:
     if(isRevisedVersion):
-        path = os.path.join(os.path.dirname(__file__),"..\\..\\lts_downloaded\\revised_cabal")
+        path = os.path.join(os.path.dirname(__file__),"..\\lts_downloaded\\revised_cabal")
     else:
-        path = os.path.join(os.path.dirname(__file__),"..\\..\\lts_downloaded\\tar_package")
+        path = os.path.join(os.path.dirname(__file__),"..\\lts_downloaded\\tar_package")
     lts_dots = lts.replace("-",".")
     path = path+"/lts-"+lts
     comand = 'scrapy crawl stackage -a LTS="%s" -s FILES_STORE="%s" -s REVISSED="%s"' % (lts_dots, path, isRevisedVersion)
