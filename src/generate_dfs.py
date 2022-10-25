@@ -24,14 +24,16 @@ isWsl = args.wsl
 isRevisedVersion = args.revised
 logging = setup_log_level(args)
 
+FOLDERPATH =  os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
+
 for lts_version in lts_list:
     #Set the path where are located the downloaded package, and the directory path where the DataFrames will be save
     if(not isRevisedVersion):
-        path = os.path.join(os.path.dirname(__file__),"../lts_downloaded/tar_package/lts-%s"% lts_version)
-        directory_path = os.path.join(os.path.dirname(__file__),"../data/dfs/lts-%s"% lts_version)
+        path = FOLDERPATH + "/lts_downloaded/tar_package/lts-%s"% lts_version
+        directory_path = FOLDERPATH+ "/data/dfs/lts-%s"% lts_version
     else:
-        path = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal/lts-%s"% lts_version)   
-        directory_path = os.path.join(os.path.dirname(__file__),"../data/dfs_revissed/lts-%s"% lts_version)
+        path = FOLDERPATH + "/lts_downloaded/revised_cabal/lts-%s"% lts_version 
+        directory_path = FOLDERPATH+"/data/dfs_revised/lts-%s"% lts_version
     #Change the path to work with the wsl directions
     if(isWsl):
         path = wsl + path[3:]
@@ -44,7 +46,6 @@ for lts_version in lts_list:
             raise
     date_now = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
     print("*-------------------------Starting with %s-------------------------*" % lts_version)
-    
     try:
         dir = os.listdir(path)
         if len(dir) == 0:
@@ -61,5 +62,5 @@ for lts_version in lts_list:
             # df_fix_paths = fix_paths(PATH, df_with_imports, logging, lts) use in case of change paths
             # df_with_methods = get_methods_calls(df_with_imports, logging)
     except:
-        print("The folder lts-%s" % lts_version)
+        print("The folder lts-%s doesn't exist" % lts_version)
     

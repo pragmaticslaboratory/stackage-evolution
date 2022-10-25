@@ -10,19 +10,19 @@ parser.add_argument(
     
 args = parser.parse_args()
 isRevisedVersion = args.revised
-print(isRevisedVersion)
 #lts_list = ['0-7']
 
 data = pd.read_csv("lts_list.csv")
+FOLDERPATH =  os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 os.chdir(os.getcwd()+'/scrapy')
 lts_list = data.columns
 for lts in lts_list:
     if(isRevisedVersion):
-        path = os.path.join(os.path.dirname(__file__),"../lts_downloaded/revised_cabal")
+        path = FOLDERPATH+"/lts_downloaded/revised_cabal"
     else:
-        path = os.path.join(os.path.dirname(__file__),"../lts_downloaded/tar_package")
+        path = FOLDERPATH+"/lts_downloaded/tar_package"
     lts_dots = lts.replace("-",".")
     path = path+"/lts-"+lts
     comand = 'scrapy crawl stackage -a LTS="%s" -s FILES_STORE="%s" -s REVISED="%s"' % (lts_dots, path, isRevisedVersion)
-    print(comand)
+    print(path)
     call(comand)
