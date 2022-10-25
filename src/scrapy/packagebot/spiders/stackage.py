@@ -35,7 +35,7 @@ class PackagesSpider(scrapy.Spider):
     def parse_package(self, response):
         package_name = re.search(
             r".*/package/(.*)$", response.url).group(1)
-        isRevissedVersion = self.settings["REVISSED"]
+        isRevissedVersion = self.settings["REVISED"]
         if(isRevissedVersion == 'True'):
             page = requests.get("https://hackage.haskell.org/package/%s/revisions/" % package_name)
             bodyPage = BeautifulSoup(page.content, 'html.parser')
