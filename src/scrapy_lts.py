@@ -24,5 +24,4 @@ for lts in lts_list:
     lts_dots = lts.replace("-",".")
     path = path+"/lts-"+lts
     comand = 'scrapy crawl stackage -a LTS="%s" -s FILES_STORE="%s" -s REVISED="%s"' % (lts_dots, path, isRevisedVersion)
-    print(path)
-    call(comand)
+    os.system(comand)
