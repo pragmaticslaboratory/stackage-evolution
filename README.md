@@ -52,14 +52,25 @@ Si estas en Jupyter ejecutando las RQ es tan simple como apretar el boton de eje
 5.3.- scrapy
 5.4.- util
 
-El programa main.py es quien se encarga de construir todos los Data Frames e ir almacenandolos dentro de la carpeta data, la subcarpeta varia segun la indicación que se le indique. 
+El programa scrapy_lts.py es quien se encarga de descargar  todos los paquetes de las versiones indicadas en el archivo lts_list.csv, esta información la almacena en la carpeta lts_downloaded, si se indica el argumento --revised se descargaran los cabal de las versiones revisadas de los paquetes y se almacenaran en la subcarpeta revised_cabal. Por otra parte si no se indican argumentos se descargaran por completo los paquetes en su forma .tar, estos datos se almacenaran en tar_package
+*--------------------------------- Ejecución -------------------------------*
+Para ejecutar scrapy_lts.py se debe estar ubicado en la carpeta src y ejecutar el comando 
+
+python scrapy_lts.py [args] or python3 scrapy_lts.py [args]
+
+hay algunos argumentos que se les pueden pasar al comando: 
+* --revised este comando es para descargar las versiones revisadas de los paquetes, unicamente descargara su .cabal, si este argumento no se especifica descargara los paquetes de forma normal, esto significa que descargara sus .tar)
+
+*---------------------------------------------------------------------------*
+
+El programa generate_dfs.py es quien se encarga de construir todos los Data Frames e ir almacenandolos dentro de la carpeta data, la subcarpeta varia segun la indicación que se le indique. 
 5.1.- Para hacer el proceso de generar los Data Frames utiliza las pipes presente en la carpeta features, cada pipe tiene su funcionalidad y transforma el formato de la data o añade nueva información a los Data Frames.
 
 *--------------------------------- Ejecución -------------------------------*
-Para ejecutar el main es necesario estar ubicado en la consola en la carpeta src. Hay que considerar que es necesario tener instalado python para la ejecucion.
+Para ejecutar el generate_dfs es necesario estar ubicado en la consola en la carpeta src. Hay que considerar que es necesario tener instalado python para la ejecucion.
 El comando es 
 
-python main.py [args] or python3 main.py [args]
+python generate_dfs.py [args] or python3 generate_dfs.py [args]
 
 hay algunos argumentos que se les pueden pasar al comando: 
 * -v para ver los logs que va generando el programa
@@ -68,9 +79,9 @@ hay algunos argumentos que se les pueden pasar al comando:
 * --revised este comando es por si deseas generar los Data Frames a partir de las versiones revisadas de los Cabal (Si no se especifica genera los Data Frames con la información presente en los paquetes con extension .tar)
 
 Example:
-    python main.py -q --revised
+    python generate_dfs.py -q --revised
 
-*----------------------------------------------------------------*
+*---------------------------------------------------------------------------*
 
 5.2.- En la carpeta parse es donde se encuentran los programas hechos en Haskell que se encargan de parsear la información de los paquetes que recibe, y asi poder transformarla en data utilizable para los analisis. Estos parse son llamados por las mismas pipes cuando estan siendo ejecutadas.
 **Consideración** 
@@ -78,10 +89,4 @@ Los parse para que sean funcionales y puedan ser ejecutados por las pipes es nec
 
 5.3.- La carpeta scrapy es donde se encuentra el proyecto de scrapy, el cual mediante spiders se encarga de extraer los nombres de los paquetes por lts en la web de Stackage, para luego buscar en Hackage y descargar el archivo comprimido de extensión .tar donde se encuentra la información completa del paquete, o la version revisada que solo posee el archivo .cabal del paquete. Las descargas se van almacenando directamente en la carpeta de lts_downloaded
 
-*--------------------------------- Ejecución -------------------------------*
-posicionarse en src/scrapy/packagebot
-
-scrapy crawl stackage 
-
-*----------------------------------------------------------------*
-5.4.- La carpeta util tiene programas utilizados por el main.py, en concreto son los argumentos que se les puede pasar al comando de ejecucion del main.
+5.4.- La carpeta util tiene programas utilizados por generate_dfs.py.

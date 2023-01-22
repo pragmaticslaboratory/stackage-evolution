@@ -1,10 +1,10 @@
 import errno
 import os
-import glob
 import pandas as pd
 from datetime import datetime
 from util.logging import setup_log_level
 from util.parser import setup_command_line
+from util.generate_parse_exe import generate_parse_exe
 from features.P0_create_package_catalog import create_package_catalog,create_package_catalog_revision
 from features.P1_construct_initial_dataframe import process_catalog_csv
 from features.P2_construct_dataframe_with_paths import construct_df_with_paths
@@ -26,6 +26,10 @@ logging = setup_log_level(args)
 
 FOLDERPATH =  os.path.split(os.path.split(os.path.realpath(__file__))[0])[0]
 
+generate_parse_exe(FOLDERPATH)
+
+#change the directory to generate_dfs path
+os.chdir(FOLDERPATH+'/src')
 for lts_version in lts_list:
     #Set the path where are located the downloaded package, and the directory path where the DataFrames will be save
     if(not isRevisedVersion):
@@ -55,6 +59,7 @@ for lts_version in lts_list:
                 csv_file = create_package_catalog(path,directory_path, date_now, logging)
             else:
                 csv_file = create_package_catalog_revision(path,directory_path, date_now, logging)
+            lts_version = "lts-"+lts_version
             initial_df = process_catalog_csv(os.path.join(os.path.dirname(__file__), csv_file), logging, directory_path,lts_version)
             df_with_paths = construct_df_with_paths(path, initial_df, logging)
             df_with_imports = construct_df_with_imports(df_with_paths, logging)
@@ -63,4 +68,3 @@ for lts_version in lts_list:
             # df_with_methods = get_methods_calls(df_with_imports, logging)
     except:
         print("The folder lts-%s doesn't exist" % lts_version)
-    
