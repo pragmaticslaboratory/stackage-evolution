@@ -5,12 +5,10 @@ import copy
 from datetime import datetime
 
 
-def create_csv(data, date_now, logging, lts):
+def create_csv(data, directory_path, date_now, logging):
     logging.info("Writing results to file")
     try:
-        csv_path = os.path.join(os.path.dirname(__file__),
-                                "../../data/%s/packages-catalog-{date}.csv".format(
-            date=date_now) % lts)
+        csv_path = directory_path + "/packages-catalog-{date}.csv".format(date=date_now)
         csv_file_name = csv_path
         with open(csv_file_name, "w") as csv_file:
             csv_file.write("\n".join(data))
@@ -42,7 +40,8 @@ def clean_utf8(path_file):
     file = io.open(path_file, 'w', encoding="utf-8")
     file.write(text)
     file.close()
-def create_package_catalog_revision(path, date_now, logging, lts):
+
+def create_package_catalog_revision(path, directory_path, date_now, logging):
     pkg_dirs = os.listdir(path)
     logging.info("Starting work at {cabal_file}".format(
     cabal_file=pkg_dirs))
@@ -65,9 +64,9 @@ def create_package_catalog_revision(path, date_now, logging, lts):
         if completed_process.returncode == 0:
             package_catalog.append(completed_process.stdout)
 
-    return create_csv(package_catalog, date_now, logging, lts)
+    return create_csv(package_catalog, directory_path, date_now, logging)
 
-def create_package_catalog(path, date_now, logging, lts):
+def create_package_catalog(path, directory_path,date_now, logging):
     _tmp_pkg_tuple_dirs = []
     logging.info("Processing package index with root {path}".format(path=path))
     for _, pkg_tuple, _ in walklevel(path, level=0):
@@ -107,4 +106,4 @@ def create_package_catalog(path, date_now, logging, lts):
         if completed_process.returncode == 0:
             package_catalog.append(completed_process.stdout)
 
-    return create_csv(package_catalog, date_now, logging, lts)
+    return create_csv(package_catalog, directory_path, date_now, logging)

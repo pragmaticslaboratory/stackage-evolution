@@ -40,7 +40,7 @@ def build_metadata(data):
     }
 
 
-def process_catalog_csv(csvFilename, logger, lts):
+def process_catalog_csv(csvFilename, logger, directory_path, lts):
     logger.info("Constructing initial dataframe")
     data = []
     for row in csv.reader(open(csvFilename), delimiter=";"):
@@ -58,9 +58,7 @@ def process_catalog_csv(csvFilename, logger, lts):
                       'deps', 'provided-modules', 'src-dirs',  'main-modules', 'mtl-direct', 'version-range-deps'])
     df.sort_index(inplace=True)
 
-    df_path = os.path.join(os.path.dirname(__file__),
-                           "../../data/%s/%s.df" % (
-        lts, lts))
+    df_path = directory_path + "/%s.df" % lts
     df.to_pickle(df_path)
     logger.debug(df[['package', 'main-modules']])
 
