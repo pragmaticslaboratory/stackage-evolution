@@ -1,6 +1,7 @@
 import System.Environment
 import System.IO
 import Debug.Trace
+import Distribution.Utils.Path
 import Distribution.Package
 import Distribution.PackageDescription
 import Distribution.PackageDescription.Parsec
@@ -55,7 +56,7 @@ exposedAndOtherModules d = (sort (nub (lmodules ++ emodules)), mainModules)
         mainModules = concatMap (\(_, ctree) -> [(modulePath (condTreeData ctree))]) (condExecutables d)
 
 getSrcDirs :: GenericPackageDescription -> [FilePath]
-getSrcDirs d = sort (nub (ldirs ++ edirs))
+getSrcDirs d = sort (nub (map getSymbolicPath (ldirs ++ edirs)))
   where ldirs = case (condLibrary d) of
                     Nothing -> []
                     Just condl -> hsSourceDirs $ libBuildInfo (condTreeData condl)

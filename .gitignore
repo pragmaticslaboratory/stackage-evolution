@@ -1,3 +1,8 @@
+# Haskell
+*.hi
+*.o
+
+# IDEs
 .vscode
 .idea
 .DS_Store
