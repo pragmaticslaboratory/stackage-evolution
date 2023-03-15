@@ -112,6 +112,7 @@ getModuleCalledFunctions :: (Show l) => STX.Module l -> [[QName l]]
 getModuleCalledFunctions (STX.Module _ _ _ _ declarations)
   -- trace (show declarations)
  =
+  trace (show declarations)
   (map getBindCalledFunctions $
    filter
      (\decl ->

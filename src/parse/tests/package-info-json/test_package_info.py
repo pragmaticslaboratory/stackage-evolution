@@ -36,6 +36,39 @@ tests/parse-cabal/test_parse_cabal.py::test_bytestring PASSED
 tests/parse-cabal/test_parse_cabal.py::test_aws PASSED
 """
 
+x2 = """
+tests/package-info-json/test_package_info.py::test_case1 PASSED
+tests/package-info-json/test_package_info.py::test_case2 PASSED
+tests/package-info-json/test_package_info.py::test_case3_1 PASSED
+tests/package-info-json/test_package_info.py::test_case3_2 PASSED
+tests/package-info-json/test_package_info.py::test_case4 PASSED
+tests/package-info-json/test_package_info.py::test_case5 PASSED
+tests/package-info-json/test_package_info.py::test_case6 PASSED
+tests/package-info-json/test_package_info.py::test_case7 PASSED
+tests/package-info-json/test_package_info.py::test_case8 PASSED
+tests/package-info-json/test_package_info.py::test_case9 FAILED***
+tests/package-info-json/test_package_info.py::test_case10 PASSED
+tests/package-info-json/test_package_info.py::test_case11 FAILED***
+tests/package-info-json/test_package_info.py::test_case12 PASSED
+tests/package-info-json/test_package_info.py::test_case13 FAILED***
+tests/package-info-json/test_package_info.py::test_case14 FAILED**
+tests/package-info-json/test_package_info.py::test_case15 PASSED
+tests/package-info-json/test_package_info.py::test_case16 PASSED
+tests/package-info-json/test_package_info.py::test_case17 FAILED***
+tests/package-info-json/test_package_info.py::test_case18 PASSED
+tests/package-info-json/test_package_info.py::test_case19 PASSED
+tests/package-info-json/test_package_info.py::test_case20 FAILED***
+tests/package-info-json/test_package_info.py::test_case21 FAILED***
+tests/package-info-json/test_package_info.py::test_case22 PASSED
+tests/package-info-json/test_package_info.py::test_case23 FAILED***
+tests/package-info-json/test_package_info.py::test_case24 PASSED
+tests/package-info-json/test_package_info.py::test_case25 FAILED***
+tests/package-info-json/test_package_info.py::test_case26 PASSED
+tests/package-info-json/test_package_info.py::test_case27 FAILED***
+tests/parse-cabal/test_parse_cabal.py::test_bytestring PASSED
+tests/parse-cabal/test_parse_cabal.py::test_aws PASSED
+"""
+
 
 def run_parser(case_path):
     path_list = [
@@ -134,6 +167,10 @@ def test_case9():
     filename = os.path.join(os.path.dirname(__file__), "inputs/case9.txt")
     calls = run_parser(filename)
 
+    # This case seems incorrect, as MaybeT appears in the *type signature*
+    # but is not called in the code. In fact, MaybeT does not exists as data constructor:
+    # its variants are constructed using either Just or Nothing, and those cases are
+    # already appearing in the calls data.
     assert "MaybeT" in calls
 
 
@@ -149,6 +186,11 @@ def test_case11():
     calls = run_parser(filename)
 
     assert "throwError" in calls
+    # assert "runTCMTop" in call
+    # assert "null" in calls
+    # assert "liftIO" in calls
+    # assert "putStr" in calls
+    # assert "unlines" in calls
 
 
 def test_case12():
