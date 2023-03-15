@@ -1,0 +1,37 @@
+set dotenv-load := false
+
+default:
+    just --list --unsorted
+
+test:
+    pytest
+
+runpi case:
+    printf "tests/package-info-json/inputs/test.cabal\ntests/package-info-json/inputs/{{case}}.txt" | ./PackageInfoJSON
+
+clean:
+    rm -f *.hi
+    rm -f *.o
+    find ./ --name "__pycache__" |xargs rm -r {}
+
+install-libs:
+    cabal install --lib split
+    cabal install cpphs
+    cabal install --lib haskell-src-exts
+    cabal install --lib aeson
+    cabal install --lib extra
+
+make-parse-cabal:
+    ghc --make ParseCabal.hs -package Cabal
+    rm ParseCabal.hi
+    rm ParseCabal.o
+
+make-package-info-json:
+    ghc --make PackageInfoJSON.hs -package Cabal -package cpphs
+    rm PackageInfoJSON.hi
+    rm PackageInfoJSON.o
+
+make-package-imports:
+    ghc --make PackageImports.hs -package Cabal -package cpphs
+    rm PackageImports.hi
+    rm PackageImports.o

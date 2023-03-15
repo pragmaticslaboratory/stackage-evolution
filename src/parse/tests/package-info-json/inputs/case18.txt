@@ -1,0 +1,3 @@
+
+dryInstantiate :: RefCreateEnv blk a -> IO a
+dryInstantiate bind = evalStateT (runRefCreateEnv bind) (__IMPOSSIBLE__, 0)
