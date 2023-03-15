@@ -6,13 +6,8 @@ import re
 from packaging import version
 import glob
 
-url = '../../data'
-list_url = glob.glob(f"{url}/*")
-lts_list = [lts.split('lts-')[1].replace('-','.') for lts in list_url]
-lts_list = sorted(lts_list, key=lambda x: float(x))
-lts_list = [lts.replace('.','-') for lts in lts_list]
-lts_list.remove('18-28')
-lts_list.insert(18,'18-28')
+data = pd.read_csv("../../src/lts_list.csv")
+lts_list = data.columns
 #lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11','16-31','17-2','18-6','18-8','18-18']
 
 ops = {'>=': operator.ge, '>': operator.gt, '<=': operator.le, '<': operator.lt, '==': operator.eq}

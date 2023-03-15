@@ -25,7 +25,7 @@ class PackageDownloadPipeline(FilesPipeline):
                 packageVersion = item['version']
                 filename = "%s/%s.tar.gz" % (packageName, packageVersion)
             else:
-                filename = "%s.cabal" & item['package']
+                filename = "%s.cabal" % item['package']
             yield scrapy.Request(file_url, meta={'filename': filename})            
         return
 
@@ -33,14 +33,14 @@ class PackageDownloadPipeline(FilesPipeline):
         return request.meta['filename']
 
     def item_completed(self, results, item, info):
-        file_paths = ["%s/%s" % (settings.FILES_STORE, x['path']) for ok, x in results if ok]
+        path = item["file_store"]
+        file_paths = ["%s/%s" % (path, x['path']) for ok, x in results if ok]
         item['file_paths'] = file_paths        
         return item
 
 class PackageUnzipDeletePipeline(object):
     def process_item(self, item, spider):        
         for downloadedFile in item['file_paths']:
-            print("MIRA QUE LLEGO ACA",downloadedFile)
             try:            
                 print("Extracting %s" % downloadedFile)
                 tar = tarfile.open(downloadedFile, "r:gz")

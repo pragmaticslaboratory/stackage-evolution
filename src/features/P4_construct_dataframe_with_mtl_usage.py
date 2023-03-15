@@ -17,7 +17,7 @@ def chunks(l, n):
 
 
 ####################################################################################
-def generateDataframeByCategory(df, df_file, logging, lts):
+def generateDataframeByCategory(df, df_file, logging, directory_path, lts):
     """Takes a dataframe where a package has 1+ categories, and generates a new
     dataframe with unique package-category combinations, hence reflecting
     the multiplicity of categories by package
@@ -49,9 +49,7 @@ def generateDataframeByCategory(df, df_file, logging, lts):
     ]
     catdf["category"] = catdf["category"].apply(str)
 
-    df_path = os.path.join(os.path.dirname(__file__),
-                           "../../data/%s/%s-by-category.df" % (
-        lts, lts))
+    df_path = directory_path + "/%s-by-category.df" % lts 
     catdf.to_pickle(df_path)
     logging.info("Done creating dataframe split by category")
 
@@ -60,7 +58,7 @@ def generateDataframeByCategory(df, df_file, logging, lts):
 ####################################################################################
 
 
-def generate_monad_usage_dataframe(df_file, logging, lts):
+def generate_monad_usage_dataframe(df_file, logging, directory_path, lts):
     """Takes a dataframe with the information of imported modules, and yields
     a new dataframe with the usage information of each monad in the mtl_modules list.
     """
@@ -134,11 +132,9 @@ def generate_monad_usage_dataframe(df_file, logging, lts):
         df[other_mod] = pd.Series(
             moduleMonadUsageSeries[other_mod], index=df.index)
 
-    df_path = os.path.join(os.path.dirname(__file__),
-                           "../../data/%s/%s.df" % (
-        lts, lts))
+    df_path = directory_path + "/%s.df" % lts 
     df.to_pickle(df_path)
-    generateDataframeByCategory(df, df_file, logging, lts)
+    generateDataframeByCategory(df, df_file, logging, directory_path, lts)
     logging.info("Finishing work at %s" % str(datetime.now()))
 
 
