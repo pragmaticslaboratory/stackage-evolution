@@ -1,3 +1,0 @@
-
-instance Monad m => ReadGHCOpts (ReaderT GHCEnv m) where
-  askGhcOpts = withReaderT ghcEnvOpts askGhcOpts

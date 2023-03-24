@@ -1,0 +1,5 @@
+extractDerivables :: Schema -> [Schema]
+extractDerivables s = flip evalState state . normSchema . snd <$> rawRecs
+  where
+    rawRecs = getTypes s
+    state = M.fromList rawRecs

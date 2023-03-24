@@ -1,0 +1,4 @@
+instance (MonadCont m) => MonadCont (MaybeT m) where
+  callCC f = MaybeT (callCC (\c -> runMaybeT (f (wrap c))))
+    where wrap :: (Maybe a -> m (Maybe b)) -> a -> MaybeT m b
+          wrap c = MaybeT . c . Just

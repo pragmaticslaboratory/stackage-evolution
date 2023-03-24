@@ -1,0 +1,4 @@
+-- runListT https://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-List.html
+
+runListTArrow :: ListTArrow m a b -> a -> m [b]
+runListTArrow a = runListT . runKleisli (runListTArrow' a)

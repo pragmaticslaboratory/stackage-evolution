@@ -1,0 +1,5 @@
+seqctx :: CSCtx o -> CSCtx o
+seqctx = r (-1)
+ where
+  r _ [] = []
+  r n (HI hid (id, t) : ctx) = HI hid (id, lift n t) : r (n - 1) ctx

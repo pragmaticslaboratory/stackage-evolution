@@ -1,3 +1,0 @@
--- | Run a normal session based request state monad.
-runRequests :: StateT Session (SafeReqM cfg) a -> SafeReqM cfg a
-runRequests = flip evalStateT (Session Nothing Nothing Nothing)

@@ -1,4 +1,0 @@
-openUrl :: String -> MaybeT IO String
-openUrl url = case parseURI url of
-    Nothing -> fail "couldn't parse url"
-    Just u  -> liftIO (getResponseBody =<< simpleHTTP (mkRequest GET u))

@@ -1,0 +1,5 @@
+casetreeTop :: EvaluationStrategy -> CC.CompiledClauses -> TCM C.TTerm
+casetreeTop eval cc = flip runReaderT (initCCEnv eval) $ do
+  let a = commonArity cc
+  lift $ reportSLn "treeless.convert.arity" 40 $ "-- common arity: " ++ show a
+  lambdasUpTo a $ casetree cc

@@ -1,4 +1,0 @@
-closedTerm :: T.TTerm -> HsCompileM (HS.Exp, UsesFloat)
-closedTerm v = do
-  v <- liftTCM $ addCoercions v
-  runWriterT (term v `runReaderT` initCCEnv)

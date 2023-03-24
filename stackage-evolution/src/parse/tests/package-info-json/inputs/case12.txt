@@ -1,3 +1,0 @@
-tryError :: MonadError e m => m a -> m (Either e a)
-tryError m =
-  catchError (liftM Right m) (return . Left)

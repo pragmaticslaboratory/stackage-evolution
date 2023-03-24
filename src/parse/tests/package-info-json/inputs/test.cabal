@@ -1,0 +1,10 @@
+name:                example
+version:             0
+synopsis:            -
+homepage:            -
+license:             TEST
+license-file:        LICENSE
+author:              -
+maintainer:          -
+category:            -
+build-type:          Simple

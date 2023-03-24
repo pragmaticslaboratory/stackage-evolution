@@ -1,2 +1,0 @@
-instance (MonadCont m) => MonadCont (RandT g m) where
-  callCC = liftCallCC' callCC

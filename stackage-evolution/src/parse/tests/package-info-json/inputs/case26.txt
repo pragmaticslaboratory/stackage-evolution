@@ -1,6 +1,0 @@
-withPathOrientation :: Path            -- ^ Path directing the orientation.
-                    -> Float           -- ^ Basline Y axis position, used to align text properly.
-                    -> Drawing px ()   -- ^ The sub drawings.
-                    -> Drawing px ()
-withPathOrientation path p sub =
-    liftF $ WithPathOrientation path p sub ()

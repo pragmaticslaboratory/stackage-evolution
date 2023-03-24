@@ -1,0 +1,3 @@
+-- | Run a user defined session request state monad.
+runStRequests :: st -> StateT st (SafeReqM cfg) a -> SafeReqM cfg a
+runStRequests = flip evalStateT

@@ -1,6 +1,0 @@
-unifyVar :: Nat -> Exp o -> StateT (Assignments o) Maybe ()
-unifyVar v e = do
-  unif <- get
-  case lookup v unif of
-    Nothing -> modify ((v, e) :)
-    Just e' -> unify' e e'

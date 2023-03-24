@@ -1,0 +1,8 @@
+-- runState https://hackage.haskell.org/package/mtl-2.2.2/docs/Control-Monad-State-Lazy.html#v:runState
+
+getRandomPrimFromStdGenIO :: Prim a -> IO a
+getRandomPrimFromStdGenIO 
+    = getStdRandom
+    . runState
+    . getRandomPrim
+
