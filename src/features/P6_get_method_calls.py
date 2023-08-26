@@ -5,6 +5,9 @@ import pandas as pd
 import numpy as np
 import os
 
+import sys #pleger
+packageInfoJSONBinary = '../parse/PackageInfoJSON' + ('.exe' if sys.plataform == 'Win32' else '')  #pleger path for different os
+
 
 def get_methods_calls(df_file, logging):
 
@@ -36,7 +39,7 @@ def get_methods_calls(df_file, logging):
         logging.debug(paths_for_input)
         complated_process = subprocess.run(
             os.path.join(os.path.dirname(__file__),
-                         '../parse/PackageInfoJSON.exe'),
+                         packageInfoJSONBinary), #pleger 
             stdout=PIPE,
             input=paths_for_input,
             text=True

@@ -12,6 +12,10 @@ import subprocess
 from subprocess import PIPE
 import re
 
+import sys #pleger
+packageImportBinary = '../parse/PackageImports' + ('.exe' if sys.plataform == 'Win32' else '') #pleger path for different os
+
+
 ###########################################################################################
 # This script processes each package in the dataframe, parsing all their provided modules
 # to determine all imported modules in each package. The parsing and extraction is
@@ -59,7 +63,7 @@ def construct_df_with_imports(df_file, logging):
                 else:
                     complated_process = subprocess.run(
                         os.path.join(os.path.dirname(__file__),
-                                     '../parse/PackageImports.exe'),
+                                     packageImportBinary), #pleger
                         stdout=PIPE,
                         input=paths_for_input,
                         text=True
@@ -70,6 +74,7 @@ def construct_df_with_imports(df_file, logging):
                     output = re.sub(r"^\[.*\]", "", output).strip()
 
                 # Persisting output
+                outerror = "" #pleger
                 if (not output and not outerror) or output:
                     if not output and not outerror:
                         logging.warn("[%s] Empty result..." % idx)

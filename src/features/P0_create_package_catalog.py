@@ -1,9 +1,11 @@
+import sys #pleger -> plataform
 import os
 import io
 import subprocess
 import copy
 from datetime import datetime
 
+parseCabalBinary = '../parse/ParseCabal' + '.exe' if sys.plataform == 'Win32' else '' #path for different os
 
 def create_csv(data, directory_path, date_now, logging):
     logging.info("Writing results to file")
@@ -54,7 +56,7 @@ def create_package_catalog_revision(path, directory_path, date_now, logging):
         clean_utf8(cabal_file)
         completed_process = subprocess.run(
             os.path.join(os.path.dirname(__file__),
-                         '../parse/ParseCabal.exe'),
+                        parseCabalBinary), #pleger
             input=cabal_file,
             capture_output=True,
             text=True,
@@ -70,7 +72,9 @@ def create_package_catalog(path, directory_path,date_now, logging):
     _tmp_pkg_tuple_dirs = []
     logging.info("Processing package index with root {path}".format(path=path))
     for _, pkg_tuple, _ in walklevel(path, level=0):
-        logging.info("package tuple",pkg_tuple)
+       # print("pkg_tuple:") #pleger
+       # print(pkg_tuple) #pleger
+       # logging.info("package tuple", str(pkg_tuple)) #pleger str(pkg_tuple)
         _tmp_pkg_tuple_dirs.extend(pkg_tuple)
         _tmp_pkg_tuple_dirs = map(lambda x: (
             x, os.path.join(path, x)), _tmp_pkg_tuple_dirs)
@@ -94,15 +98,18 @@ def create_package_catalog(path, directory_path,date_now, logging):
         logging.info("Starting work at {cabal_file}".format(
             cabal_file=cabal_file))
         clean_utf8(cabal_file)
+        
         completed_process = subprocess.run(
             os.path.join(os.path.dirname(__file__),
-                         '../parse/ParseCabal.exe'),
+                        parseCabalBinary), #pleger
             input=cabal_file,
             capture_output=True,
             text=True,
             shell=True,
         )
 
+        #print("PROCESS COMPLETE") #pleger
+        #print(completed_process) #pleger
         if completed_process.returncode == 0:
             package_catalog.append(completed_process.stdout)
 

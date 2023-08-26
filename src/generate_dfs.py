@@ -1,3 +1,5 @@
+import traceback #pleger (to catch error trace)
+
 import errno
 import os
 import pandas as pd
@@ -44,6 +46,7 @@ for lts_version in lts_list:
         directory_path = wsl + directory_path[3:]
 
     try:
+        print(directory_path)
         os.mkdir(directory_path)
     except OSError as e:
         if e.errno != errno.EEXIST:
@@ -67,9 +70,10 @@ for lts_version in lts_list:
             print("*-------------------------Starting with imports-------------------------*")
             df_with_imports = construct_df_with_imports(df_with_paths, logging)
             print("*-------------------------Starting with category monad-------------------------*")
-            df_with_monads_categories = generate_monad_usage_dataframe(directory_path+"/lts-%s-with-paths-with-imports.df" % lts_version, logging, directory_path, lts_version)
+            df_with_monads_categories = generate_monad_usage_dataframe(directory_path+"/%s-with-paths-with-imports.df" % lts_version, logging, directory_path, lts_version)
             # df_fix_paths = fix_paths(PATH, df_with_imports, logging, lts) use in case of change paths
             # df_with_methods = get_methods_calls(df_with_imports, logging)
     except Exception as e:
         print(e)
+        traceback.print_exc() #pleger error trace
         print("The folder lts-%s doesn't exist" % lts_version)
