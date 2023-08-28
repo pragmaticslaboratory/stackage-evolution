@@ -74,8 +74,8 @@ def construct_df_with_imports(df_file, logging):
                     output = re.sub(r"^\[.*\]", "", output).strip()
 
                 # Persisting output
-                outerror = "" #pleger
                 if (not output and not outerror) or output:
+                    outerror = "" #pleger (PATCH TO PREVENT EXCEPTIION)
                     if not output and not outerror:
                         logging.warn("[%s] Empty result..." % idx)
                     with open(pickle_file, "wb") as pickleFile:
