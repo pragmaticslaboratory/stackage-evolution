@@ -2,9 +2,9 @@
 This software is created to analyze the evolution of the [Stackage](https://www.stackage.org) repository, and its analysis is reported in:
 
 [!WARNING] 
-The title and abstract are temporary.
 
-_Title:_ Stackage Repository: An Exploratory Study of its Evolution
+The title and abstract are temporary.
+_Title:_ The Stackage Repository: An Exploratory Study of its Evolution
  
 _Abstract:_  
 
