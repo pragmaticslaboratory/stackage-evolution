@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 import sys #pleger
-packageInfoJSONBinary = '../parse/PackageInfoJSON' + ('.exe' if sys.plataform == 'Win32' else '')  #pleger path for different os
+packageInfoJSONBinary = '../parse/PackageInfoJSON' + ('.exe' if sys.platform == 'Win32' else '')  #pleger path for different os
 
 
 def get_methods_calls(df_file, logging):

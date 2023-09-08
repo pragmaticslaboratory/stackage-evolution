@@ -13,7 +13,7 @@ from subprocess import PIPE
 import re
 
 import sys #pleger
-packageImportBinary = '../parse/PackageImports' + ('.exe' if sys.plataform == 'Win32' else '') #pleger path for different os
+packageImportBinary = '../parse/PackageImports' + ('.exe' if sys.platform == 'Win32' else '') #pleger path for different os
 
 
 ###########################################################################################
