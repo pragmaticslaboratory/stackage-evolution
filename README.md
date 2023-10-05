@@ -1,7 +1,5 @@
 
-This software is created to analyze the evolution of the [Stackage](https://www.stackage.org) repository, and its analysis is reported in:
-
-_Title:_ Stackage Repository: An Exploratory Study of its Evolution
+This software is created to analyze the evolution of the [Stackage](https://www.stackage.org) repository, and its analysis is reported in the submitted paper:_Stackage Repository: An Exploratory Study of its Evolution_
  
 _Abstract:_  
 
@@ -32,7 +30,7 @@ This repository contains scripts for different purposes:
 
 ## Research Questions and Answers
 
-For the paper, we replied to a set of research questions, which are available and can be tested online in the folder ``notebooks``. The code associated with the research questions is implemented in Python using [Jupiter](https://jupyter.org/).      
+For the paper, we replied to a set of research questions (RQs):      
 
 * **RQ1** Which packages are imported the most by other Stackage packages? Do these packages have unstable or incompatible dependencies according to their Stackage release?
 
@@ -45,6 +43,8 @@ For the paper, we replied to a set of research questions, which are available an
 * **RQ5**  How has the use of the selected monad packages evolved?
   
 * **RQ6**  How many packages that depend on the mtl and transformers packages are added to and removed from Stackage? How many packages that depended on these monad packages stopped their dependencies?
+
+These RQs with their answers are available and can be tested online in the folder ``notebooks``. The code associated with the research questions is implemented in Python using [Jupiter](https://jupyter.org/)
 
 ## Research
 
