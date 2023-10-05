@@ -2,9 +2,9 @@
 from pathlib import Path
 import os
 
-import sys #pleger -> plataform
-parseCabalBinary = 'src/parse/ParseCabal' + ('.exe' if sys.plataform == 'Win32' else '') #pleger path for different os
-packageImportsBinary = 'src/parse/PackageImports' + ('.exe' if sys.plataform == 'Win32' else '') #pleger path for different os
+import sys #pleger -> platform
+parseCabalBinary = 'src/parse/ParseCabal' + ('.exe' if sys.platform == 'Win32' else '') #pleger path for different os
+packageImportsBinary = 'src/parse/PackageImports' + ('.exe' if sys.platform == 'Win32' else '') #pleger path for different os
 
 #stack exec ghc --package Cabal -- ParseCabal.hs
 #stack exec ghc --package Cabal --package haskell-src-exts --package cpphs PackageImports.hs 

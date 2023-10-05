@@ -5,8 +5,8 @@ import subprocess
 import copy
 from datetime import datetime
 
-import sys #pleger -> plataform
-parseCabalBinary = '../parse/ParseCabal' + ('.exe' if sys.plataform == 'Win32' else '') #pleger path for different os
+import sys #pleger -> platform
+parseCabalBinary = '../parse/ParseCabal' + ('.exe' if sys.platform == 'Win32' else '') #pleger path for different os
 
 def create_csv(data, directory_path, date_now, logging):
     logging.info("Writing results to file")

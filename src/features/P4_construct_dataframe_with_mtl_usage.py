@@ -49,7 +49,7 @@ def generateDataframeByCategory(df, df_file, logging, directory_path, lts):
     ]
     catdf["category"] = catdf["category"].apply(str)
 
-    df_path = directory_path + "/lts-%s-by-category.df" % lts 
+    df_path = directory_path + "/%s-by-category.df" % lts 
     catdf.to_pickle(df_path)
     logging.info("Done creating dataframe split by category")
 
@@ -97,7 +97,6 @@ def generate_monad_usage_dataframe(df_file, logging, directory_path, lts):
                     pkgMonadUsage[other_mod] = 1
                 else:
                     pkgMonadUsage[other_mod] = 0
-
             packagesMonadUsage[pkg] = pkgMonadUsage
 
     #####################################################################
@@ -132,7 +131,7 @@ def generate_monad_usage_dataframe(df_file, logging, directory_path, lts):
         df[other_mod] = pd.Series(
             moduleMonadUsageSeries[other_mod], index=df.index)
 
-    df_path = directory_path + "/lts-%s.df" % lts 
+    df_path = directory_path + "/%s.df" % lts 
     df.to_pickle(df_path)
     generateDataframeByCategory(df, df_file, logging, directory_path, lts)
     logging.info("Finishing work at %s" % str(datetime.now()))
