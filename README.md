@@ -44,7 +44,7 @@ For the paper, we replied to a set of research questions (RQs):
   
 * **RQ6**  How many packages that depend on the mtl and transformers packages are added to and removed from Stackage? How many packages that depended on these monad packages stopped their dependencies?
 
-These RQs with their answers are available and can be tested online in the folder ``notebooks``. The code associated with the research questions is implemented in Python using [Jupiter](https://jupyter.org/)
+These RQs with their answers are available and can be tested online in the folder ``notebooks``. The code associated with the research questions is implemented in Python using [Jupiter](https://jupyter.org/).
 
 ## Research
 
