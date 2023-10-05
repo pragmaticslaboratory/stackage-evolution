@@ -6,13 +6,12 @@ import re
 from packaging import version
 import glob
 
-data = pd.read_csv("../../src/lts_list.csv")
-lts_list = data.columns
 #lts_list = ['0-7', '2-22', '3-22', '6-35', '7-24', '9-21', '11-22', '12-14', '12-26', '13-11', '13-19', '14-27', '15-3', '16-11','16-31','17-2','18-6','18-8','18-18']
 
 ops = {'>=': operator.ge, '>': operator.gt, '<=': operator.le, '<': operator.lt, '==': operator.eq}
 def get_lts_list():
-    
+    data = pd.read_csv("../../src/lts_list.csv")
+    lts_list = data.columns
     return lts_list
 
 # returns a list with all the existing packages in some version of LTS
@@ -26,6 +25,7 @@ def get_all_time_packages(df_list):
 
 # return a DataFrame of versions of each package by LTS 
 def get_versions_df(df_list):
+    lts_list = get_lts_list()
     pkgs = get_all_time_packages(df_list)
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
@@ -61,6 +61,7 @@ def get_packages_out_of_stackage(pkgs, df):
 
 # create a dict of lts
 def create_lts_obj():
+    lts_list = get_lts_list()
     data = {}
     for idx, lts in enumerate(lts_list):
         data[lts] = []
@@ -69,6 +70,7 @@ def create_lts_obj():
 # 
 def get_pkgs_out_transitively(df_list):
     visited = {}
+    lts_list = get_lts_list()
     def dfs(lts, pkg):
         visited[pkg] = True
         if not pkg in list(df['package']):
@@ -97,6 +99,7 @@ def get_pkgs_out_transitively(df_list):
     return out_transitive_pkgs
 
 def get_pkgs_direct_dependency(df_list):  
+    lts_list = get_lts_list()
     direct_dependency_pkgs = create_lts_obj()
     for i, df in enumerate(df_list):
         aux_direct_dependency_pkgs = []        
@@ -112,6 +115,7 @@ def get_pkgs_direct_dependency(df_list):
     return direct_dependency_pkgs
 
 def get_pkgs_indirect_dependency(df1):
+    lts_list = get_lts_list()
     visited = {}
     def dfs(df1, pkg):
         visited[pkg] = True
@@ -155,7 +159,8 @@ def get_update_count_df(df_list, versions_df):
                 return past_version != version 
                 
         return False
-
+    
+    lts_list = get_lts_list()
     pkgs = get_all_time_packages(df_list)
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
@@ -174,6 +179,7 @@ def get_update_count_df(df_list, versions_df):
 
 
 def get_count_updated_packages_by_lts(df_list, df):
+    lts_list = get_lts_list()
     count_total_pkg = create_lts_obj()
     count_updated_packages_by_lts = create_lts_obj()
     for idx, lts in enumerate(lts_list):
@@ -203,6 +209,7 @@ def get_count_updated_packages_by_lts(df_list, df):
 
 
 def build_continuity_matrix(df_list, pkgs, monad_direct):
+    lts_list = get_lts_list()
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
     for i, row in df.iterrows():
@@ -225,6 +232,7 @@ def build_continuity_matrix(df_list, pkgs, monad_direct):
 
 
 def get_added_packages_monad_by_lts(continuity_df):
+    lts_list = get_lts_list()
     count = list(np.zeros(len(lts_list)))
 
     for i, row in continuity_df.iterrows():
@@ -239,6 +247,7 @@ def get_added_packages_monad_by_lts(continuity_df):
 
 
 def get_removed_packages_monad_by_lts(continuity_df):
+    lts_list = get_lts_list()
     count = list(np.zeros(len(lts_list)))
     
     for i, row in continuity_df.iterrows():
@@ -251,6 +260,7 @@ def get_removed_packages_monad_by_lts(continuity_df):
 
 
 def get_packages_started_use_mtl(continuity_df):
+    lts_list = get_lts_list()
     count = list(np.zeros(len(lts_list)))
     
     for i, row in continuity_df.iterrows():
@@ -266,6 +276,7 @@ def get_packages_started_use_mtl(continuity_df):
 
 
 def get_packages_stopped_use_mtl(continuity_df):
+    lts_list = get_lts_list()
     count = list(np.zeros(len(lts_list)))
     
     for i, row in continuity_df.iterrows():
@@ -486,6 +497,7 @@ def diagram_box(list_deps):
     return outlier_list
 
 def calculate_bottom(data, bar_idx):
+    lts_list = get_lts_list()
     if bar_idx == 0:
         return 0
     
@@ -495,6 +507,7 @@ def calculate_bottom(data, bar_idx):
     return cumsum
 
 def calculate_bottom_dict(data, keylist, bar_idx):
+    lts_list = get_lts_list()
     if bar_idx == 0:
         return 0
     
