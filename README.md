@@ -48,7 +48,7 @@ For the paper, we replied to a set of research questions, which are available an
 
 ## Research
 
-This exploratory study is developed by Felipe Ruiz, Nicolas Sepulveda, [Paul Leger](http://pleger.cl), [Ismael Figueroa](https://ifigueroap.github.io/), and [Nicolás Cardozo](https://github.com/ncardozo) at [Pragmatics Lab](http://pragmaticslab.com). 
+This exploratory study is developed by [Felipe Ruiz](https://github.com/fruizrob), Nicolas Sepulveda, [Paul Leger](http://pleger.cl), [Ismael Figueroa](https://ifigueroap.github.io/), and [Nicolás Cardozo](https://github.com/ncardozo) at [Pragmatics Lab](http://pragmaticslab.com). 
 
 
 
