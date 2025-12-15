@@ -1,0 +1,6 @@
+pandas
+scrapy
+requests
+beautifulsoup4
+lxml
+pytest
