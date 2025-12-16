@@ -11,7 +11,7 @@ packageImportsBinary = 'src/parse/PackageImports' + ('.exe' if sys.platform == '
 #stack exec ghc --package Cabal --package haskell-src-exts --package cpphs --package aeson --package extra -- PackageInfoJSON.hs
 
 def generate_parse_exe(folder_path):
-    os.chdir(os.getcwd()+'/parse')
+    os.chdir(folder_path + '/src/parse')
 
     path = Path(folder_path + parseCabalBinary)
     if(path.is_file()):

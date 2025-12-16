@@ -42,7 +42,10 @@ def construct_df_with_paths(path_file, df_file, logging):
 
     filepath_pattern = "%s/%s/%s-%s/%s/%s"
     logging.info("Download dir: %s" % path_file)
-    df = pd.read_pickle(df_file)
+    if isinstance(df_file, str):
+        df = pd.read_pickle(df_file)
+    else:
+        df = df_file  # Assume it's already a DataFrame
 
     for idx, row in df.iterrows():
         pkg_path = os.path.join(path_file, row['package'])

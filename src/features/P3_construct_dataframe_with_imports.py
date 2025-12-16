@@ -24,7 +24,10 @@ packageImportBinary = '../parse/PackageImports' + ('.exe' if sys.platform == 'Wi
 
 
 def construct_df_with_imports(df_file, logging):
-    df = pd.read_pickle(df_file)
+    if isinstance(df_file, str):
+        df = pd.read_pickle(df_file)
+    else:
+        df = df_file  # Assume it's already a DataFrame
     output = ''
     packageImports = {}
     pickle_file_pattern = "./pickles/pkg_imports_%s.pickle"

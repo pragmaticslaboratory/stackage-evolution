@@ -12,6 +12,8 @@ def setup_command_line():
         "--revised", help="Set the PATH  to make and save the DataFrames with revised Cabals", action='store_true', default=False)
     parser.add_argument("--wsl", help="Set the PATHS to use wsl ",
                         action='store_true', default=False)
+    parser.add_argument("--start-from", help="Start from a specific stage: catalog, initial, paths, imports, monads",
+                        choices=['catalog', 'initial', 'paths', 'imports', 'monads'], default='catalog')
 
     return parser
 

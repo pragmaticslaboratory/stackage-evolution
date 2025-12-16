@@ -42,7 +42,7 @@ def generateDataframeByCategory(df, df_file, logging, directory_path, lts):
             additionalrows.append(newRow)
 
     catdf = catdf.drop(catdf[multicat_criteria].index)
-    catdf = catdf.append(additionalrows)
+    catdf = pd.concat([catdf, pd.DataFrame(additionalrows)], ignore_index=True)
     catdf = catdf.sort_index()
     catdf.columns = [
         "category" if x == "categories" else x for x in catdf.columns.tolist()
@@ -63,7 +63,10 @@ def generate_monad_usage_dataframe(df_file, logging, directory_path, lts):
     a new dataframe with the usage information of each monad in the mtl_modules list.
     """
 
-    df = pd.read_pickle(df_file)
+    if isinstance(df_file, str):
+        df = pd.read_pickle(df_file)
+    else:
+        df = df_file  # Assume it's already a DataFrame
 
     listToProcess = df.index.tolist()
     nthreads = 4

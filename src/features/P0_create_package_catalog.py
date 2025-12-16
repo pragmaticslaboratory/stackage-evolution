@@ -33,16 +33,19 @@ def walklevel(some_dir, level=1):
 
 
 def clean_utf8(path_file):
-    file = io.open(path_file, 'r', encoding="utf-8")
+    try:
+        file = io.open(path_file, 'r', encoding="utf-8")
+        test = file.read()
+        text = test.encode("ascii", "replace")
+        text = text.decode()
+        file.close()
 
-    test = file.read()
-    text = test.encode("ascii", "replace")
-    text = text.decode()
-    file.close()
-
-    file = io.open(path_file, 'w', encoding="utf-8")
-    file.write(text)
-    file.close()
+        file = io.open(path_file, 'w', encoding="utf-8")
+        file.write(text)
+        file.close()
+    except FileNotFoundError:
+        logging.warning(f"File not found: {path_file}. Skipping clean_utf8.")
+        pass  # No hacer nada si el archivo no existe
 
 def create_package_catalog_revision(path, directory_path, date_now, logging):
     pkg_dirs = os.listdir(path)
@@ -98,6 +101,9 @@ def create_package_catalog(path, directory_path,date_now, logging):
         cabal_file = os.path.join(pkg_path, name_version[0], name + ".cabal")
         logging.info("Starting work at {cabal_file}".format(
             cabal_file=cabal_file))
+        if not os.path.isfile(cabal_file):
+            logging.warning(f"Cabal file not found: {cabal_file}. Skipping package.")
+            continue
         clean_utf8(cabal_file)
         
         completed_process = subprocess.run(
