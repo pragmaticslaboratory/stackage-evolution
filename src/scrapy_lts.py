@@ -5,16 +5,16 @@ import pandas as pd
 import multiprocessing
 import subprocess
 
+from util.logging import setup_log_level
+from util.parser import setup_command_line
+
 # Argumentos
-parser = argparse.ArgumentParser(description='Generate a CSV file with package catalog')
-parser.add_argument(
-    "--revised",
-    help="Set the PATH to make and save the DataFrames with revised Cabals",
-    action='store_true',
-    default=False
-)
+parser = setup_command_line()
+
 args = parser.parse_args()
 isRevisedVersion = args.revised
+logging = setup_log_level(args)
+
 
 # Leer lts_list.csv usando ruta absoluta
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

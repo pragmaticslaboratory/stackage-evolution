@@ -26,7 +26,7 @@ def get_all_time_packages(df_list):
 # return a DataFrame of versions of each package by LTS 
 def get_versions_df(df_list):
     lts_list = get_lts_list()
-    pkgs = get_all_time_packages(df_list)
+    pkgs = list(get_all_time_packages(df_list))
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
     for i, row in df.iterrows():
@@ -116,30 +116,33 @@ def get_pkgs_direct_dependency(df_list):
 
 def get_pkgs_indirect_dependency(df1):
     lts_list = get_lts_list()
-    visited = {}
-    def dfs(df1, pkg):
-        visited[pkg] = True
-        deps = df1[df1['package'] == pkg]['deps']
-        if len(deps) > 0:
-            for dependency in deps[0]: 
-                if not dependency in visited:
-                    dfs(df1, dependency)
-
-        return 1
+    
+    def dfs(graph, pkg, visited):
+        if pkg in visited:
+            return
+        visited.add(pkg)
+        for dep in graph.get(pkg, []):
+            dfs(graph, dep, visited)
+    
     for i, df in enumerate(df1):
+        # Construir grafo de dependencias para este LTS
+        graph = {}
+        for _, row in df.iterrows():
+            graph[row.loc['package']] = row.loc['deps']
+        
         len_ind_deps = []
-        for idx, row in df.iterrows():    
-            total = 0
-            for dependency in list(row['deps']):         
-                dfs(df, dependency)
-            for dependency in list(row['deps']):     
-                if dependency in visited:
-                    del visited[dependency]
-            total = len(visited)
-            visited = {}
-            len_ind_deps.append(total)
-        print(f"{lts_list[i]} processed")
+        for _, row in df.iterrows():
+            directas = set(row.loc['deps'])
+            visited = directas.copy()
+            for dep in directas:
+                for subdep in graph.get(dep, []):
+                    dfs(graph, subdep, visited)
+            indirect_count = len(visited)
+            len_ind_deps.append(indirect_count)
+        
         df['len_ind_deps'] = len_ind_deps
+        print(f"{lts_list[i]} processed")
+    
     return 1
 
 def get_update_count_df(df_list, versions_df):
@@ -161,7 +164,7 @@ def get_update_count_df(df_list, versions_df):
         return False
     
     lts_list = get_lts_list()
-    pkgs = get_all_time_packages(df_list)
+    pkgs = list(get_all_time_packages(df_list))
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
     for i, row in df.iterrows():
@@ -210,6 +213,8 @@ def get_count_updated_packages_by_lts(df_list, df):
 
 def build_continuity_matrix(df_list, pkgs, monad_direct):
     lts_list = get_lts_list()
+    if isinstance(pkgs, set):
+        pkgs = list(pkgs)
     df = pd.DataFrame(index=pkgs, columns=lts_list)
 
     for i, row in df.iterrows():
@@ -553,7 +558,7 @@ def foo(df):
     df['dependencies_status'] = ''
     for idx, pkg in df.iterrows():
         dependencies_status = {}
-        for version_range_depencency in pkg["version-range-deps"]:
+        for version_range_depencency in pkg.loc["version-range-deps"]:
             if len(version_range_depencency) != 2:
                 # without dependencies
                 continue
@@ -563,7 +568,7 @@ def foo(df):
                 dependencies_status[name] = "ANY"
                 continue
 
-            lts_pkg_index = df.index[df["package"] == name].tolist()
+            lts_pkg_index = df.index[df.loc[:, "package"] == name].tolist()
             if not lts_pkg_index:
                 # package that doesn't exist in the LTS
                 continue
@@ -583,8 +588,8 @@ def foo(df):
         '''if any(dependencies_status[name] == "OUT_RANGE" for name in dependencies_status):
             out_range_dependencies = dict(filter(lambda status: status[1] == "OUT_RANGE", dependencies_status.items()))
             out_range_names = list(out_range_dependencies.keys())
-            lts_dependencies_version = list(df[df["package"].isin(out_range_names)]["version"])
-            ranges = dict(filter(lambda range: range[0] in out_range_names, pkg["version-range-deps"]))
+            lts_dependencies_version = list(df.loc[df.loc[:, "package"].isin(out_range_names), "version"])
+            ranges = dict(filter(lambda range: range[0] in out_range_names, pkg.loc["version-range-deps"]))
             print(
                  {
                      "pkg": pkg["package"],
