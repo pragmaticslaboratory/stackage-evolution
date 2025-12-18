@@ -39,11 +39,17 @@ def construct_df_with_imports(df_file, logging):
 
         # to do: change the path by OS
 
+        # Robust handling for missing or NaN values
+        provided_modules = row["provided-modules-found"]
+        if not isinstance(provided_modules, (list, tuple)):
+            provided_modules = []
+        mains_modules = row["main-modules-found"]
+        if not isinstance(mains_modules, (list, tuple)):
+            mains_modules = []
         pkg, mods, mains, cabal_file = (
             idx,
-            list(map(lambda x: x[1], row["provided-modules-found"])),
-            list(
-                map(lambda x: x, row["main-modules-found"])),
+            list(map(lambda x: x[1], provided_modules)),
+            list(map(lambda x: x, mains_modules)),
             df.loc[idx]["cabal-file"].replace('\\', '/'),
         )
         package_paths = [cabal_file] + mods + mains

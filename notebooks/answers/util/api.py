@@ -245,7 +245,7 @@ def get_added_packages_monad_by_lts(continuity_df):
             if(row[lts] == 2):
                 if(j == 0):
                     count[j] += 1
-                elif(row[j-1] == 0):
+                elif(row.iloc[j-1] == 0):
                     count[j] += 1
     
     return count
@@ -258,7 +258,7 @@ def get_removed_packages_monad_by_lts(continuity_df):
     for i, row in continuity_df.iterrows():
         for j, lts in enumerate(lts_list):
             if(j > 0):
-                if(row[j] == 0 and row[j-1] == 2):
+                if(row[lts] == 0 and row.iloc[j-1] == 2):
                     count[j] += 1
 
     return count
@@ -270,11 +270,11 @@ def get_packages_started_use_mtl(continuity_df):
     
     for i, row in continuity_df.iterrows():
         for j, lts in enumerate(lts_list):
-            if(j == 0 and row[j] == 2):
+            if(j == 0 and row[lts] == 2):
                 count[j] += 1
 
             if(j > 0):
-                if(row[j] == 2 and row[j-1] == 1):
+                if(row[lts] == 2 and row.iloc[j-1] == 1):
                     count[j] += 1
 
     return count
@@ -287,7 +287,7 @@ def get_packages_stopped_use_mtl(continuity_df):
     for i, row in continuity_df.iterrows():
         for j, lts in enumerate(lts_list):
             if(j > 0):
-                if(row[j] == 1 and row[j-1] == 2):
+                if(row[lts] == 1 and row.iloc[j-1] == 2):
                     count[j] += 1
                     
     return count
